@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/LaunchAtLogin.build/master.swiftdeps"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/.build/checkouts/LaunchAtLogin-Modern/Sources/LaunchAtLogin/LaunchAtLogin.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/LaunchAtLogin.build/LaunchAtLogin.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/LaunchAtLogin.build/LaunchAtLogin.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/LaunchAtLogin.build/LaunchAtLogin~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/LaunchAtLogin.build/LaunchAtLogin.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/LaunchAtLogin.build/LaunchAtLogin.dia"
+  }
+}

@@ -1,0 +1,700 @@
+{
+  "builtTestProducts" : [
+
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.Watchdog-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/sources",
+      "importPath" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/CameraManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/DetectionEngine.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/FaceDetector.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/MotionDetector.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/VideoRecorder.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/CaptureRecord.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/ProFeature.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/ScheduleConfig.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/SettingsManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Monetization/PaywallView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Monetization/SubscriptionManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Monetization/TrialManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Notifications/NotificationManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Notifications/WebhookManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Storage/CaptureStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MainWindow/CaptureDetailView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MainWindow/MainWindowView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MainWindow/StatsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MenuBar/PopoverView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MenuBar/StatusBarController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/Preferences/PreferencesView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Utilities/PDFExporter.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Utilities/WakeDetector.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/WatchdogApp.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/sources"
+        }
+      ],
+      "isLibrary" : false,
+      "moduleName" : "Watchdog",
+      "moduleOutputPath" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Modules/Watchdog.swiftmodule",
+      "objects" : [
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CameraManager.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/DetectionEngine.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/FaceDetector.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/MotionDetector.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/VideoRecorder.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureRecord.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/ProFeature.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/ScheduleConfig.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/SettingsManager.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PaywallView.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/SubscriptionManager.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/TrialManager.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/NotificationManager.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WebhookManager.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureStore.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureDetailView.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/MainWindowView.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/StatsView.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PopoverView.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/StatusBarController.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PreferencesView.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PDFExporter.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WakeDetector.swift.o",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WatchdogApp.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx13.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j12",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-Xfrontend",
+        "-entry-point-function-name",
+        "-Xfrontend",
+        "Watchdog_main",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "watchdog"
+      ],
+      "outputFileMapPath" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CameraManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/DetectionEngine.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/FaceDetector.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/MotionDetector.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/VideoRecorder.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureRecord.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/ProFeature.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/ScheduleConfig.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/SettingsManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PaywallView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/SubscriptionManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/TrialManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/NotificationManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WebhookManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureDetailView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/MainWindowView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/StatsView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PopoverView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/StatusBarController.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PreferencesView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PDFExporter.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WakeDetector.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WatchdogApp.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Modules/Watchdog.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/CameraManager.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/DetectionEngine.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/FaceDetector.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/MotionDetector.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/VideoRecorder.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/CaptureRecord.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/ProFeature.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/ScheduleConfig.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/SettingsManager.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Monetization/PaywallView.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Monetization/SubscriptionManager.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Monetization/TrialManager.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Notifications/NotificationManager.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Notifications/WebhookManager.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Storage/CaptureStore.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MainWindow/CaptureDetailView.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MainWindow/MainWindowView.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MainWindow/StatsView.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MenuBar/PopoverView.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MenuBar/StatusBarController.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/Preferences/PreferencesView.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Utilities/PDFExporter.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Utilities/WakeDetector.swift",
+        "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/WatchdogApp.swift"
+      ],
+      "tempsPath" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "Watchdog" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "Watchdog",
+      "-package-name",
+      "watchdog",
+      "-c",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/CameraManager.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/DetectionEngine.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/FaceDetector.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/MotionDetector.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/VideoRecorder.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/CaptureRecord.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/ProFeature.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/ScheduleConfig.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/SettingsManager.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Monetization/PaywallView.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Monetization/SubscriptionManager.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Monetization/TrialManager.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Notifications/NotificationManager.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Notifications/WebhookManager.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Storage/CaptureStore.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MainWindow/CaptureDetailView.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MainWindow/MainWindowView.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MainWindow/StatsView.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MenuBar/PopoverView.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MenuBar/StatusBarController.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/Preferences/PreferencesView.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Utilities/PDFExporter.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Utilities/WakeDetector.swift",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/WatchdogApp.swift",
+      "-I",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx13.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j12",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-Xfrontend",
+      "-entry-point-function-name",
+      "-Xfrontend",
+      "Watchdog_main",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "watchdog",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "Watchdog" : [
+
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+
+  },
+  "traitConfiguration" : {
+    "default" : {
+
+    }
+  },
+  "writeCommands" : {
+    "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog-entitlement.plist" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<entitlement-plist>"
+        },
+        {
+          "kind" : "virtual",
+          "name" : "<com.apple.security.get-task-allow>"
+        }
+      ],
+      "outputFilePath" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog-entitlement.plist"
+    },
+    "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/CameraManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/DetectionEngine.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/FaceDetector.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/MotionDetector.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/VideoRecorder.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/CaptureRecord.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/ProFeature.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/ScheduleConfig.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/SettingsManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Monetization/PaywallView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Monetization/SubscriptionManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Monetization/TrialManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Notifications/NotificationManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Notifications/WebhookManager.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Storage/CaptureStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MainWindow/CaptureDetailView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MainWindow/MainWindowView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MainWindow/StatsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MenuBar/PopoverView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MenuBar/StatusBarController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/Preferences/PreferencesView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Utilities/PDFExporter.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Utilities/WakeDetector.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/WatchdogApp.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/sources"
+    },
+    "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CameraManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureDetailView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureRecord.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/DetectionEngine.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/FaceDetector.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/MainWindowView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/MotionDetector.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/NotificationManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PDFExporter.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PaywallView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PopoverView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PreferencesView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/ProFeature.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/ScheduleConfig.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/SettingsManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/StatsView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/StatusBarController.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/SubscriptionManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/TrialManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/VideoRecorder.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WakeDetector.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WatchdogApp.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WebhookManager.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.product/Objects.LinkFileList"
+    },
+    "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+    }
+  }
+}

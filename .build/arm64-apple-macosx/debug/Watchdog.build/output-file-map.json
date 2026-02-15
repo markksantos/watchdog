@@ -1,0 +1,173 @@
+{
+  "": {
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/master.swiftdeps"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/CameraManager.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CameraManager.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CameraManager.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CameraManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CameraManager.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CameraManager.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/DetectionEngine.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/DetectionEngine.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/DetectionEngine.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/DetectionEngine~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/DetectionEngine.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/DetectionEngine.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/FaceDetector.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/FaceDetector.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/FaceDetector.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/FaceDetector~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/FaceDetector.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/FaceDetector.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/MotionDetector.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/MotionDetector.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/MotionDetector.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/MotionDetector~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/MotionDetector.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/MotionDetector.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Detection/VideoRecorder.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/VideoRecorder.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/VideoRecorder.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/VideoRecorder~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/VideoRecorder.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/VideoRecorder.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/CaptureRecord.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureRecord.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureRecord.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureRecord~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureRecord.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureRecord.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/ProFeature.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/ProFeature.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/ProFeature.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/ProFeature~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/ProFeature.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/ProFeature.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/ScheduleConfig.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/ScheduleConfig.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/ScheduleConfig.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/ScheduleConfig~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/ScheduleConfig.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/ScheduleConfig.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Models/SettingsManager.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/SettingsManager.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/SettingsManager.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/SettingsManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/SettingsManager.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/SettingsManager.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Monetization/PaywallView.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PaywallView.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PaywallView.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PaywallView~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PaywallView.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PaywallView.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Monetization/SubscriptionManager.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/SubscriptionManager.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/SubscriptionManager.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/SubscriptionManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/SubscriptionManager.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/SubscriptionManager.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Monetization/TrialManager.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/TrialManager.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/TrialManager.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/TrialManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/TrialManager.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/TrialManager.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Notifications/NotificationManager.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/NotificationManager.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/NotificationManager.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/NotificationManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/NotificationManager.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/NotificationManager.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Notifications/WebhookManager.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WebhookManager.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WebhookManager.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WebhookManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WebhookManager.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WebhookManager.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Storage/CaptureStore.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureStore.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureStore.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureStore~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureStore.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureStore.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MainWindow/CaptureDetailView.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureDetailView.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureDetailView.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureDetailView~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureDetailView.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/CaptureDetailView.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MainWindow/MainWindowView.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/MainWindowView.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/MainWindowView.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/MainWindowView~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/MainWindowView.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/MainWindowView.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MainWindow/StatsView.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/StatsView.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/StatsView.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/StatsView~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/StatsView.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/StatsView.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MenuBar/PopoverView.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PopoverView.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PopoverView.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PopoverView~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PopoverView.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PopoverView.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/MenuBar/StatusBarController.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/StatusBarController.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/StatusBarController.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/StatusBarController~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/StatusBarController.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/StatusBarController.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/UI/Preferences/PreferencesView.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PreferencesView.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PreferencesView.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PreferencesView~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PreferencesView.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PreferencesView.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Utilities/PDFExporter.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PDFExporter.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PDFExporter.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PDFExporter~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PDFExporter.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/PDFExporter.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/Utilities/WakeDetector.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WakeDetector.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WakeDetector.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WakeDetector~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WakeDetector.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WakeDetector.dia"
+  },
+  "/Users/markksantos/Documents/Programming Projects/watchdog/Watchdog/WatchdogApp.swift": {
+    "dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WatchdogApp.d",
+    "object": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WatchdogApp.swift.o",
+    "swiftmodule": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WatchdogApp~partial.swiftmodule",
+    "swift-dependencies": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WatchdogApp.swiftdeps",
+    "diagnostics": "/Users/markksantos/Documents/Programming Projects/watchdog/.build/arm64-apple-macosx/debug/Watchdog.build/WatchdogApp.dia"
+  }
+}
