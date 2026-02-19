@@ -64,7 +64,10 @@ class AlarmManager {
         sampleRate = engine.outputNode.outputFormat(forBus: 0).sampleRate
         if sampleRate == 0 { sampleRate = 44100.0 }
 
-        let format = AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: 1)!
+        guard let format = AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: 1) else {
+            print("[AlarmManager] Failed to create audio format")
+            return
+        }
 
         switch sound {
         case .siren:

@@ -16,6 +16,8 @@ class HotkeyManager {
     }
 
     private func registerHotkeys() {
+        guard monitors.isEmpty else { return }
+
         // ⌘⇧M — Toggle monitoring
         let monitorToggle = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
             guard event.modifierFlags.contains([.command, .shift]),
