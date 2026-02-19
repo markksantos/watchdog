@@ -66,7 +66,7 @@ struct ScheduleConfig: Codable, Equatable {
                 return true
             } else if currentTime < endTime {
                 // Morning-after portion — check previous day's weekday
-                let yesterday = calendar.date(byAdding: .day, value: -1, to: now)!
+                guard let yesterday = calendar.date(byAdding: .day, value: -1, to: now) else { return false }
                 let yesterdayWeekdayComponent = calendar.component(.weekday, from: yesterday)
                 guard let yesterdayWeekday = Weekday(rawValue: yesterdayWeekdayComponent),
                       activeWeekdays.contains(yesterdayWeekday) else {

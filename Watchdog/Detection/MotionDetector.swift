@@ -91,5 +91,7 @@ class MotionDetector: FrameAnalyzer {
 
     func reset() {
         previousGrayscale = nil
+        previousWidth = 0
+        previousHeight = 0
     }
 }

@@ -130,7 +130,7 @@ class StatusBarController {
 
         let window = NSWindow(contentViewController: hostingController)
         window.title = "Preferences"
-        window.setContentSize(NSSize(width: 480, height: 680))
+        window.setContentSize(NSSize(width: 480, height: 780))
         window.styleMask = [.titled, .closable]
         window.center()
         window.makeKeyAndOrderFront(nil)
