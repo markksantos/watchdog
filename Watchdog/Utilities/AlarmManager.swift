@@ -1,5 +1,6 @@
 import AVFoundation
 import Combine
+import os
 
 class AlarmManager {
     static let shared = AlarmManager()
@@ -9,13 +10,14 @@ class AlarmManager {
     private var autoStopTimer: Timer?
     private var cancellables = Set<AnyCancellable>()
 
-    // Synthesis state
+    // Synthesis state — protected by synthLock for audio thread safety
     private var phase: Double = 0.0
     private var currentFrequency: Double = 440.0
     private var targetFrequency: Double = 440.0
     private var isToneOn: Bool = true
     private var phaseToggleTimer: Timer?
     private var sampleRate: Double = 44100.0
+    private var synthLock = os_unfair_lock()
 
     private init() {
         SettingsManager.shared.$alarmEnabled
@@ -84,20 +86,30 @@ class AlarmManager {
             guard let buffer = ablPointer.first, let data = buffer.mData else { return noErr }
             let ptr = data.bindMemory(to: Float.self, capacity: Int(frameCount))
             let twoPi = 2.0 * Double.pi
+
+            os_unfair_lock_lock(&self.synthLock)
             let freq = self.currentFrequency
             let sr = self.sampleRate
             let toneOn = self.isToneOn
+            var localPhase = self.phase
+            os_unfair_lock_unlock(&self.synthLock)
+
             for frame in 0..<Int(frameCount) {
                 let sample: Float
                 if toneOn {
-                    sample = Float(sin(self.phase)) * volume
-                    self.phase += twoPi * freq / sr
-                    if self.phase > twoPi { self.phase -= twoPi }
+                    sample = Float(sin(localPhase)) * volume
+                    localPhase += twoPi * freq / sr
+                    if localPhase > twoPi { localPhase -= twoPi }
                 } else {
                     sample = 0.0
                 }
                 ptr[frame] = sample
             }
+
+            os_unfair_lock_lock(&self.synthLock)
+            self.phase = localPhase
+            os_unfair_lock_unlock(&self.synthLock)
+
             return noErr
         }
 
@@ -132,7 +144,9 @@ class AlarmManager {
         isToneOn = true
         phaseToggleTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
             guard let self else { return }
+            os_unfair_lock_lock(&self.synthLock)
             swap(&self.currentFrequency, &self.targetFrequency)
+            os_unfair_lock_unlock(&self.synthLock)
         }
     }
 
@@ -142,7 +156,9 @@ class AlarmManager {
             let interval = isToneOn ? onInterval : offInterval
             phaseToggleTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
                 guard let self else { return }
+                os_unfair_lock_lock(&self.synthLock)
                 self.isToneOn.toggle()
+                os_unfair_lock_unlock(&self.synthLock)
                 scheduleNext()
             }
         }

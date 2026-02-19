@@ -28,7 +28,8 @@ class WakeDetector {
     }
 
     @objc private func handleWake(_ notification: Notification) {
-        guard !isBurstCapturing else { return }
+        guard !isBurstCapturing,
+              detectionEngine?.isMonitoring == true else { return }
 
         isBurstCapturing = true
         print("[Watchdog] Wake detected - starting burst capture")

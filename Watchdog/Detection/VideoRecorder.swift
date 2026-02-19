@@ -7,13 +7,20 @@ class VideoRecorder {
     private let recordingQueue = DispatchQueue(label: "com.watchdog.videoRecorder")
     private var stopTimer: Timer?
     private var isSessionStarted = false
-    private(set) var isRecording = false
+    private var _isRecording = false
+    private let recordingLock = NSLock()
+
+    var isRecording: Bool {
+        recordingLock.lock()
+        defer { recordingLock.unlock() }
+        return _isRecording
+    }
     private var completion: ((String?) -> Void)?
     private var outputPath: String?
 
     func startRecording(dimensions: CMVideoDimensions, saveDirectory: String, completion: @escaping (String?) -> Void) {
         recordingQueue.async { [weak self] in
-            guard let self, !self.isRecording else {
+            guard let self, !self._isRecording else {
                 completion(nil)
                 return
             }
@@ -59,7 +66,7 @@ class VideoRecorder {
             self.videoInput = input
             self.adaptor = adaptor
             self.isSessionStarted = false
-            self.isRecording = true
+            self._isRecording = true
 
             writer.startWriting()
 
@@ -75,7 +82,7 @@ class VideoRecorder {
     func appendSampleBuffer(_ sampleBuffer: CMSampleBuffer) {
         recordingQueue.async { [weak self] in
             guard let self,
-                  self.isRecording,
+                  self._isRecording,
                   let writer = self.assetWriter,
                   writer.status == .writing,
                   let input = self.videoInput,
@@ -93,8 +100,8 @@ class VideoRecorder {
 
     func stopRecording() {
         recordingQueue.async { [weak self] in
-            guard let self, self.isRecording else { return }
-            self.isRecording = false
+            guard let self, self._isRecording else { return }
+            self._isRecording = false
 
             DispatchQueue.main.async {
                 self.stopTimer?.invalidate()

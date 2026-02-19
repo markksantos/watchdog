@@ -40,25 +40,42 @@ struct ScheduleConfig: Codable, Equatable {
         let calendar = Calendar.current
         let now = Date()
 
-        // Check weekday
-        let weekdayComponent = calendar.component(.weekday, from: now)
-        guard let currentWeekday = Weekday(rawValue: weekdayComponent),
-              activeWeekdays.contains(currentWeekday) else {
-            return false
-        }
-
         let currentHour = calendar.component(.hour, from: now)
         let currentMinute = calendar.component(.minute, from: now)
         let currentTime = currentHour * 60 + currentMinute
         let startTime = startHour * 60 + startMinute
         let endTime = endHour * 60 + endMinute
 
+        let weekdayComponent = calendar.component(.weekday, from: now)
+
         if startTime <= endTime {
-            // Same-day window (e.g., 9 AM to 5 PM)
+            // Same-day window (e.g., 9 AM to 5 PM) — check today's weekday
+            guard let currentWeekday = Weekday(rawValue: weekdayComponent),
+                  activeWeekdays.contains(currentWeekday) else {
+                return false
+            }
             return currentTime >= startTime && currentTime < endTime
         } else {
             // Overnight window (e.g., 9 PM to 7 AM)
-            return currentTime >= startTime || currentTime < endTime
+            if currentTime >= startTime {
+                // Evening portion — check today's weekday
+                guard let currentWeekday = Weekday(rawValue: weekdayComponent),
+                      activeWeekdays.contains(currentWeekday) else {
+                    return false
+                }
+                return true
+            } else if currentTime < endTime {
+                // Morning-after portion — check previous day's weekday
+                let yesterday = calendar.date(byAdding: .day, value: -1, to: now)!
+                let yesterdayWeekdayComponent = calendar.component(.weekday, from: yesterday)
+                guard let yesterdayWeekday = Weekday(rawValue: yesterdayWeekdayComponent),
+                      activeWeekdays.contains(yesterdayWeekday) else {
+                    return false
+                }
+                return true
+            } else {
+                return false
+            }
         }
     }
 

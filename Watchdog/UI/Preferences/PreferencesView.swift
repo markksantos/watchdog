@@ -23,6 +23,7 @@ struct PreferencesView: View {
         .navigationTitle("Preferences")
         .sheet(isPresented: $showPaywall) {
             PaywallView()
+                .environmentObject(subscriptionManager)
         }
 
         // Footer
@@ -68,11 +69,11 @@ struct PreferencesView: View {
                 }
                 Slider(value: $settingsManager.motionSensitivity, in: 0.01...0.20, step: 0.01)
                 HStack {
-                    Text("Less Sensitive")
+                    Text("More Sensitive")
                         .font(.caption2)
                         .foregroundColor(.secondary)
                     Spacer()
-                    Text("More Sensitive")
+                    Text("Less Sensitive")
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }

@@ -67,6 +67,7 @@ struct MainWindowView: View {
             }
             .sheet(isPresented: $showPaywall) {
                 PaywallView()
+                    .environmentObject(subscriptionManager)
             }
         }
         .frame(minWidth: 600, minHeight: 400)

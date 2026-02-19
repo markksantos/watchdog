@@ -14,6 +14,8 @@ class StatusBarController {
     let subscriptionManager: SubscriptionManager
 
     private var cancellables = Set<AnyCancellable>()
+    private weak var mainWindow: NSWindow?
+    private weak var preferencesWindow: NSWindow?
 
     init(settingsManager: SettingsManager, captureStore: CaptureStore, detectionEngine: DetectionEngine, subscriptionManager: SubscriptionManager) {
         self.settingsManager = settingsManager
@@ -114,6 +116,12 @@ class StatusBarController {
     func openPreferences() {
         closePopover()
 
+        if let existing = preferencesWindow, existing.isVisible {
+            existing.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+
         let preferencesView = PreferencesView()
             .environmentObject(settingsManager)
             .environmentObject(subscriptionManager)
@@ -126,12 +134,19 @@ class StatusBarController {
         window.styleMask = [.titled, .closable]
         window.center()
         window.makeKeyAndOrderFront(nil)
+        preferencesWindow = window
 
         NSApp.activate(ignoringOtherApps: true)
     }
 
     func openMainWindow() {
         closePopover()
+
+        if let existing = mainWindow, existing.isVisible {
+            existing.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
 
         let mainWindowView = MainWindowView()
             .environmentObject(settingsManager)
@@ -147,6 +162,7 @@ class StatusBarController {
         window.minSize = NSSize(width: 600, height: 400)
         window.center()
         window.makeKeyAndOrderFront(nil)
+        mainWindow = window
 
         NSApp.activate(ignoringOtherApps: true)
     }
