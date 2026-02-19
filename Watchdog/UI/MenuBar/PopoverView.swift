@@ -69,6 +69,7 @@ struct PopoverView: View {
         .frame(width: 320, height: 460)
         .sheet(isPresented: $showPaywall) {
             PaywallView()
+                .environmentObject(subscriptionManager)
         }
         .alert("Camera Access Required", isPresented: $showCameraPermissionAlert) {
             Button("Open System Settings") {

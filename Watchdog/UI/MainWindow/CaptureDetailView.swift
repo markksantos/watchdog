@@ -160,7 +160,8 @@ struct VideoPlayerView: NSViewRepresentable {
     }
 
     func updateNSView(_ nsView: AVPlayerView, context: Context) {
-        if nsView.player?.currentItem?.asset != AVURLAsset(url: url) {
+        let currentURL = (nsView.player?.currentItem?.asset as? AVURLAsset)?.url
+        if currentURL != url {
             nsView.player = AVPlayer(url: url)
         }
     }

@@ -2,7 +2,7 @@ import SwiftUI
 import StoreKit
 
 struct PaywallView: View {
-    @ObservedObject var subscriptionManager = SubscriptionManager.shared
+    @EnvironmentObject var subscriptionManager: SubscriptionManager
     @Environment(\.dismiss) private var dismiss
     @State private var selectedPlan: String = "com.watchdog.pro.annual"
     @State private var purchaseError: String?

@@ -73,11 +73,12 @@ class CameraManager: NSObject {
         processingQueue.async { [weak self] in
             self?.captureSession?.stopRunning()
             DispatchQueue.main.async {
-                self?.captureSession = nil
-                self?.videoOutput = nil
-                self?.bufferLock.lock()
-                self?.latestSampleBuffer = nil
-                self?.bufferLock.unlock()
+                guard let self else { return }
+                self.captureSession = nil
+                self.videoOutput = nil
+                self.bufferLock.lock()
+                self.latestSampleBuffer = nil
+                self.bufferLock.unlock()
             }
         }
     }
@@ -119,7 +120,7 @@ class CameraManager: NSObject {
         }
 
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
+        formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss-SSS"
         let filename = "\(formatter.string(from: Date())).jpg"
         let filePath = (saveDir as NSString).appendingPathComponent(filename)
 
