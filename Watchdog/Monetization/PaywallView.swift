@@ -21,6 +21,21 @@ struct PaywallView: View {
                 .padding(32)
             }
 
+            // Close button
+            VStack {
+                HStack {
+                    Spacer()
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 20))
+                            .foregroundColor(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(12)
+                }
+                Spacer()
+            }
+
             if subscriptionManager.isLoading {
                 loadingOverlay
             }

@@ -16,6 +16,7 @@ class StatusBarController {
     private var cancellables = Set<AnyCancellable>()
     private weak var mainWindow: NSWindow?
     private weak var preferencesWindow: NSWindow?
+    private weak var paywallWindow: NSWindow?
 
     init(settingsManager: SettingsManager, captureStore: CaptureStore, detectionEngine: DetectionEngine, subscriptionManager: SubscriptionManager) {
         self.settingsManager = settingsManager
@@ -36,6 +37,8 @@ class StatusBarController {
             self?.openMainWindow()
         }, openPreferences: { [weak self] in
             self?.openPreferences()
+        }, openPaywall: { [weak self] in
+            self?.openPaywall()
         })
         .environmentObject(settingsManager)
         .environmentObject(captureStore)
@@ -135,6 +138,31 @@ class StatusBarController {
         window.center()
         window.makeKeyAndOrderFront(nil)
         preferencesWindow = window
+
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    func openPaywall() {
+        closePopover()
+
+        if let existing = paywallWindow, existing.isVisible {
+            existing.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+
+        let paywallView = PaywallView()
+            .environmentObject(subscriptionManager)
+
+        let hostingController = NSHostingController(rootView: paywallView)
+
+        let window = NSWindow(contentViewController: hostingController)
+        window.title = "Upgrade to Pro"
+        window.setContentSize(NSSize(width: 480, height: 680))
+        window.styleMask = [.titled, .closable]
+        window.center()
+        window.makeKeyAndOrderFront(nil)
+        paywallWindow = window
 
         NSApp.activate(ignoringOtherApps: true)
     }

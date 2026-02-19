@@ -6,11 +6,11 @@ struct PopoverView: View {
     @EnvironmentObject var detectionEngine: DetectionEngine
     @EnvironmentObject var subscriptionManager: SubscriptionManager
 
-    @State private var showPaywall = false
     @State private var showCameraPermissionAlert = false
 
     var openMainWindow: () -> Void
     var openPreferences: () -> Void
+    var openPaywall: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -82,10 +82,6 @@ struct PopoverView: View {
                 .padding(.bottom, 16)
         }
         .frame(width: 320, height: 460)
-        .sheet(isPresented: $showPaywall) {
-            PaywallView()
-                .environmentObject(subscriptionManager)
-        }
         .alert("Camera Access Required", isPresented: $showCameraPermissionAlert) {
             Button("Open System Settings") {
                 if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Camera") {
@@ -246,7 +242,7 @@ struct PopoverView: View {
     // MARK: - Upgrade Button
 
     private var upgradeButton: some View {
-        Button(action: { showPaywall = true }) {
+        Button(action: openPaywall) {
             HStack {
                 Image(systemName: "star.fill")
                     .foregroundColor(.yellow)

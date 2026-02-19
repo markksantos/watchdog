@@ -8,6 +8,7 @@ struct PreferencesView: View {
     @State private var showPaywall = false
     @State private var webhookTestResult: Bool?
     @State private var alarmTesting = false
+    @State private var loginItemError: String?
 
     var body: some View {
         Form {
@@ -25,6 +26,14 @@ struct PreferencesView: View {
         .sheet(isPresented: $showPaywall) {
             PaywallView()
                 .environmentObject(subscriptionManager)
+        }
+        .alert("Launch at Login", isPresented: .init(
+            get: { loginItemError != nil },
+            set: { if !$0 { loginItemError = nil } }
+        )) {
+            Button("OK") { loginItemError = nil }
+        } message: {
+            Text(loginItemError ?? "")
         }
 
         // Footer
@@ -110,6 +119,7 @@ struct PreferencesView: View {
                     panel.canChooseFiles = false
                     panel.canCreateDirectories = true
                     panel.prompt = "Select"
+                    panel.directoryURL = URL(fileURLWithPath: settingsManager.saveLocation)
                     if panel.runModal() == .OK, let url = panel.url {
                         settingsManager.saveLocation = url.path
                     }
@@ -230,6 +240,7 @@ struct PreferencesView: View {
                     } catch {
                         print("[Watchdog] Launch at login error: \(error)")
                         settingsManager.launchAtLogin = !newValue
+                        loginItemError = "Failed to \(newValue ? "enable" : "disable") launch at login. The app must be in your Applications folder and properly signed."
                     }
                 }
             ))
