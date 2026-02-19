@@ -27,6 +27,21 @@ struct PopoverView: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
 
+            // Manual capture button
+            if settingsManager.isMonitoring {
+                Button(action: { detectionEngine.manualCapture() }) {
+                    HStack {
+                        Image(systemName: "camera.shutter.button")
+                        Text("Capture Now")
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .controlSize(.small)
+                .buttonStyle(.bordered)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 8)
+            }
+
             // Schedule status
             if settingsManager.scheduleConfig.isEnabled {
                 scheduleStatus

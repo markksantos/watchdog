@@ -1,5 +1,6 @@
 import SwiftUI
 import ServiceManagement
+import AVFoundation
 
 struct PreferencesView: View {
     @EnvironmentObject var settingsManager: SettingsManager
@@ -44,6 +45,13 @@ struct PreferencesView: View {
 
     private var detectionSection: some View {
         Section("Detection") {
+            Picker("Camera", selection: $settingsManager.selectedCameraID) {
+                Text("Default").tag("")
+                ForEach(CameraManager.availableCameras, id: \.uniqueID) { device in
+                    Text(device.localizedName).tag(device.uniqueID)
+                }
+            }
+
             Picker("Detection Mode", selection: $settingsManager.detectionMode) {
                 ForEach(DetectionMode.allCases, id: \.self) { mode in
                     Label(mode.rawValue, systemImage: mode.icon)

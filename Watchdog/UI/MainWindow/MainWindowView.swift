@@ -4,11 +4,14 @@ struct MainWindowView: View {
     @EnvironmentObject var captureStore: CaptureStore
     @EnvironmentObject var settingsManager: SettingsManager
     @EnvironmentObject var subscriptionManager: SubscriptionManager
+    @EnvironmentObject var detectionEngine: DetectionEngine
 
     @State private var showDeleteAllAlert = false
     @State private var selectedCapture: CaptureRecord?
     @State private var selectedTab = 0
     @State private var showPaywall = false
+    @State private var searchText = ""
+    @State private var filterDetectionType: DetectionMode?
 
     private let columns = [GridItem(.adaptive(minimum: 160), spacing: 12)]
 
@@ -19,12 +22,22 @@ struct MainWindowView: View {
                     if captureStore.captures.isEmpty {
                         emptyState
                     } else {
-                        captureGrid
+                        VStack(spacing: 0) {
+                            filterBar
+                            if filteredCaptures.isEmpty {
+                                noResultsState
+                            } else {
+                                captureGrid
+                            }
+                        }
                     }
+                } else if selectedTab == 1 {
+                    livePreviewTab
                 } else {
                     statsTab
                 }
             }
+            .searchable(text: $searchText, prompt: "Search by date or time...")
             .navigationTitle("Watchdog")
             .navigationDestination(for: CaptureRecord.ID.self) { captureID in
                 if let capture = captureStore.captures.first(where: { $0.id == captureID }) {
@@ -35,10 +48,11 @@ struct MainWindowView: View {
                 ToolbarItemGroup(placement: .principal) {
                     Picker("View", selection: $selectedTab) {
                         Text("Captures").tag(0)
-                        Text("Statistics").tag(1)
+                        Text("Live").tag(1)
+                        Text("Statistics").tag(2)
                     }
                     .pickerStyle(.segmented)
-                    .frame(width: 200)
+                    .frame(width: 280)
                 }
 
                 ToolbarItemGroup {
@@ -71,6 +85,49 @@ struct MainWindowView: View {
             }
         }
         .frame(minWidth: 600, minHeight: 400)
+    }
+
+    // MARK: - Live Preview Tab
+
+    private var livePreviewTab: some View {
+        Group {
+            if detectionEngine.isMonitoring {
+                VStack(spacing: 0) {
+                    CameraPreviewView(session: detectionEngine.cameraManager.currentSession)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color.black)
+
+                    HStack(spacing: 16) {
+                        Circle()
+                            .fill(Color.green)
+                            .frame(width: 8, height: 8)
+                        Text("Live — \(settingsManager.detectionMode.rawValue)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Button(action: { detectionEngine.manualCapture() }) {
+                            Label("Capture Now", systemImage: "camera.shutter.button")
+                        }
+                        .controlSize(.small)
+                    }
+                    .padding(12)
+                    .background(.bar)
+                }
+            } else {
+                VStack(spacing: 16) {
+                    Image(systemName: "video.slash.fill")
+                        .font(.system(size: 48))
+                        .foregroundColor(.secondary)
+                    Text("Camera Inactive")
+                        .font(.title2)
+                        .fontWeight(.medium)
+                    Text("Enable monitoring to see the live camera feed.")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
     }
 
     // MARK: - Stats Tab
@@ -117,6 +174,63 @@ struct MainWindowView: View {
         return Text("\(todayCount) capture\(todayCount == 1 ? "" : "s") today")
             .font(.subheadline)
             .foregroundColor(.secondary)
+    }
+
+    // MARK: - Filter Bar
+
+    private var filterBar: some View {
+        HStack(spacing: 8) {
+            filterChip(label: "All", type: nil)
+            ForEach(DetectionMode.allCases, id: \.self) { mode in
+                filterChip(label: mode.rawValue, icon: mode.icon, type: mode)
+            }
+            Spacer()
+            Text("\(filteredCaptures.count) capture\(filteredCaptures.count == 1 ? "" : "s")")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(.bar)
+    }
+
+    private func filterChip(label: String, icon: String? = nil, type: DetectionMode?) -> some View {
+        let isActive = filterDetectionType == type
+        return Button {
+            filterDetectionType = type
+        } label: {
+            HStack(spacing: 4) {
+                if let icon {
+                    Image(systemName: icon)
+                        .font(.caption2)
+                }
+                Text(label)
+                    .font(.caption)
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(isActive ? Color.accentColor.opacity(0.15) : Color.secondary.opacity(0.08))
+            .foregroundColor(isActive ? .accentColor : .secondary)
+            .clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - No Results State
+
+    private var noResultsState: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 36))
+                .foregroundColor(.secondary)
+            Text("No matching captures")
+                .font(.title3)
+                .fontWeight(.medium)
+            Text("Try adjusting your search or filter.")
+                .font(.body)
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     // MARK: - Empty State
@@ -172,11 +286,29 @@ struct MainWindowView: View {
         }
     }
 
-    // MARK: - Grouping
+    // MARK: - Filtering & Grouping
+
+    private var filteredCaptures: [CaptureRecord] {
+        var results = captureStore.captures
+
+        if let filter = filterDetectionType {
+            results = results.filter { $0.detectionType == filter }
+        }
+
+        if !searchText.isEmpty {
+            let query = searchText.lowercased()
+            results = results.filter {
+                $0.formattedTimestamp.lowercased().contains(query) ||
+                $0.detectionType.rawValue.lowercased().contains(query)
+            }
+        }
+
+        return results
+    }
 
     private var groupedCaptures: [(key: String, value: [CaptureRecord])] {
         let calendar = Calendar.current
-        let grouped = Dictionary(grouping: captureStore.captures) { capture -> String in
+        let grouped = Dictionary(grouping: filteredCaptures) { capture -> String in
             if calendar.isDateInToday(capture.timestamp) {
                 return "Today"
             } else if calendar.isDateInYesterday(capture.timestamp) {
