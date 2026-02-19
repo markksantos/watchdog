@@ -7,6 +7,7 @@ struct PopoverView: View {
     @EnvironmentObject var subscriptionManager: SubscriptionManager
 
     @State private var showPaywall = false
+    @State private var showCameraPermissionAlert = false
 
     var openMainWindow: () -> Void
     var openPreferences: () -> Void
@@ -68,6 +69,19 @@ struct PopoverView: View {
         .frame(width: 320, height: 460)
         .sheet(isPresented: $showPaywall) {
             PaywallView()
+        }
+        .alert("Camera Access Required", isPresented: $showCameraPermissionAlert) {
+            Button("Open System Settings") {
+                if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Camera") {
+                    NSWorkspace.shared.open(url)
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Watchdog needs camera access to monitor for detections. Please enable it in System Settings → Privacy & Security → Camera.")
+        }
+        .onReceive(detectionEngine.$cameraPermissionDenied) { denied in
+            if denied { showCameraPermissionAlert = true }
         }
     }
 

@@ -6,6 +6,7 @@ struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var selectedPlan: String = "com.watchdog.pro.annual"
     @State private var purchaseError: String?
+    @State private var restoreMessage: String?
 
     var body: some View {
         ZStack {
@@ -32,6 +33,14 @@ struct PaywallView: View {
             Button("OK") { purchaseError = nil }
         } message: {
             Text(purchaseError ?? "")
+        }
+        .alert("Restore Purchases", isPresented: .init(
+            get: { restoreMessage != nil },
+            set: { if !$0 { restoreMessage = nil } }
+        )) {
+            Button("OK") { restoreMessage = nil }
+        } message: {
+            Text(restoreMessage ?? "")
         }
     }
 
@@ -200,6 +209,8 @@ struct PaywallView: View {
                 await subscriptionManager.restorePurchases()
                 if subscriptionManager.isProUser {
                     dismiss()
+                } else {
+                    restoreMessage = "No active subscription found for your Apple ID. If you believe this is an error, contact App Store support."
                 }
             }
         } label: {

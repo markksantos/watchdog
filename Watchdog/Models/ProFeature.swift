@@ -7,6 +7,10 @@ enum ProFeature: String, CaseIterable {
     case webhookAlerts = "Webhook Alerts"
     case advancedPDFReports = "Advanced PDF Reports"
     case statsDashboard = "Stats Dashboard"
+    case alarmSiren = "Alarm Siren"
+    case flashAlert = "Flash Alert"
+    case stealthMode = "Stealth Mode"
+    case autoLock = "Auto-Lock"
 
     var icon: String {
         switch self {
@@ -16,6 +20,10 @@ enum ProFeature: String, CaseIterable {
         case .webhookAlerts: return "bell.and.waves.left.and.right"
         case .advancedPDFReports: return "doc.richtext.fill"
         case .statsDashboard: return "chart.bar.fill"
+        case .alarmSiren: return "speaker.wave.3.fill"
+        case .flashAlert: return "light.beacon.max.fill"
+        case .stealthMode: return "eye.slash.fill"
+        case .autoLock: return "lock.fill"
         }
     }
 
@@ -27,6 +35,10 @@ enum ProFeature: String, CaseIterable {
         case .webhookAlerts: return "Send HTTP POST alerts to Slack or custom URLs"
         case .advancedPDFReports: return "Export detailed analytics tables and breakdowns"
         case .statsDashboard: return "View capture trends, heatmaps, and weekly summaries"
+        case .alarmSiren: return "Play an audible alarm siren on detection"
+        case .flashAlert: return "Flash the screen red/blue on detection"
+        case .stealthMode: return "Hide the display while monitoring is active"
+        case .autoLock: return "Automatically lock the screen after detection"
         }
     }
 }

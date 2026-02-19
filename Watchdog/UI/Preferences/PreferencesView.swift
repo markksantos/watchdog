@@ -6,6 +6,7 @@ struct PreferencesView: View {
     @EnvironmentObject var subscriptionManager: SubscriptionManager
     @State private var showPaywall = false
     @State private var webhookTestResult: Bool?
+    @State private var alarmTesting = false
 
     var body: some View {
         Form {
@@ -14,10 +15,11 @@ struct PreferencesView: View {
             schedulingSection
             webhookSection
             generalSection
+            securityResponseSection
             subscriptionSection
         }
         .formStyle(.grouped)
-        .frame(width: 480, height: 680)
+        .frame(width: 480, height: 780)
         .navigationTitle("Preferences")
         .sheet(isPresented: $showPaywall) {
             PaywallView()
@@ -152,6 +154,10 @@ struct PreferencesView: View {
                             .buttonStyle(.bordered)
                             .tint(settingsManager.scheduleConfig.activeWeekdays.contains(day) ? .accentColor : .secondary)
                             .controlSize(.small)
+                            .disabled(
+                                settingsManager.scheduleConfig.activeWeekdays.contains(day) &&
+                                settingsManager.scheduleConfig.activeWeekdays.count == 1
+                            )
                         }
                     }
 
@@ -218,6 +224,99 @@ struct PreferencesView: View {
                     }
                 }
             ))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Toggle("Prevent System Sleep", isOn: $settingsManager.preventSleep)
+                Text("Keeps your Mac awake while Watchdog is running so monitoring is never interrupted.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Toggle("Prevent Screen Lock", isOn: $settingsManager.preventScreenLock)
+                Text("Keeps the display on and prevents auto-lock. Useful if you need the camera to stay active.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+
+    // MARK: - Security Response Section
+
+    private var securityResponseSection: some View {
+        Section("Security Response") {
+            // Alarm Siren
+            if subscriptionManager.hasAccess(to: .alarmSiren) {
+                Toggle("Alarm Siren", isOn: $settingsManager.alarmEnabled)
+
+                if settingsManager.alarmEnabled {
+                    Picker("Sound", selection: $settingsManager.alarmSound) {
+                        ForEach(AlarmSound.allCases, id: \.self) { sound in
+                            Text(sound.rawValue).tag(sound)
+                        }
+                    }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text("Volume")
+                            Spacer()
+                            Text(String(format: "%.0f%%", settingsManager.alarmVolume * 100))
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .monospacedDigit()
+                        }
+                        Slider(value: $settingsManager.alarmVolume, in: 0.0...1.0, step: 0.05)
+                    }
+
+                    Button(alarmTesting ? "Playing..." : "Test Alarm") {
+                        alarmTesting = true
+                        AlarmManager.shared.test()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3.1) {
+                            alarmTesting = false
+                        }
+                    }
+                    .controlSize(.small)
+                    .disabled(alarmTesting)
+                }
+            } else {
+                proFeatureLock(feature: .alarmSiren)
+            }
+
+            // Flash Alert
+            if subscriptionManager.hasAccess(to: .flashAlert) {
+                Toggle("Flash Alert", isOn: $settingsManager.flashAlertEnabled)
+            } else {
+                proFeatureLock(feature: .flashAlert)
+            }
+
+            // Stealth Mode
+            if subscriptionManager.hasAccess(to: .stealthMode) {
+                Toggle("Stealth Mode", isOn: $settingsManager.stealthModeEnabled)
+
+                if settingsManager.stealthModeEnabled {
+                    Text("Press ⌘⇧L to reveal screen while monitoring")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            } else {
+                proFeatureLock(feature: .stealthMode)
+            }
+
+            // Auto-Lock
+            if subscriptionManager.hasAccess(to: .autoLock) {
+                Toggle("Auto-Lock on Detection", isOn: $settingsManager.autoLockEnabled)
+
+                if settingsManager.autoLockEnabled {
+                    Picker("Lock Delay", selection: $settingsManager.autoLockDelay) {
+                        Text("Immediately").tag(0)
+                        Text("5 seconds").tag(5)
+                        Text("10 seconds").tag(10)
+                        Text("30 seconds").tag(30)
+                    }
+                }
+            } else {
+                proFeatureLock(feature: .autoLock)
+            }
         }
     }
 

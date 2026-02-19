@@ -5,6 +5,7 @@ class DetectionEngine: NSObject, ObservableObject {
     static let shared = DetectionEngine()
 
     @Published var isMonitoring: Bool = false
+    @Published var cameraPermissionDenied: Bool = false
 
     let cameraManager = CameraManager()
     private let faceDetector = FaceDetector()
@@ -14,6 +15,12 @@ class DetectionEngine: NSObject, ObservableObject {
     private var alwaysOnTimer: Timer?
     private var cancellables = Set<AnyCancellable>()
     private var burstTimer: Timer?
+
+    // Per-action cooldowns to prevent spam-triggering security responses
+    private let securityActionCooldown: TimeInterval = 30
+    private var lastAlarmFired: Date?
+    private var lastFlashFired: Date?
+    private var lastAutoLockFired: Date?
 
     var onCapture: ((CaptureRecord) -> Void)?
 
@@ -40,7 +47,11 @@ class DetectionEngine: NSObject, ObservableObject {
 
     func startMonitoring() {
         cameraManager.requestPermission { [weak self] granted in
-            guard granted, let self else { return }
+            guard let self else { return }
+            guard granted else {
+                DispatchQueue.main.async { self.cameraPermissionDenied = true }
+                return
+            }
 
             self.cameraManager.sampleBufferDelegate = self
             self.cameraManager.startSession()
@@ -62,6 +73,9 @@ class DetectionEngine: NSObject, ObservableObject {
         currentAnalyzer = nil
         motionDetector.reset()
         cameraManager.stopSession()
+        lastAlarmFired = nil
+        lastFlashFired = nil
+        lastAutoLockFired = nil
 
         DispatchQueue.main.async { [weak self] in
             self?.isMonitoring = false
@@ -110,18 +124,51 @@ class DetectionEngine: NSObject, ObservableObject {
         // Trigger video recording if pro and enabled
         let videoEnabled = SettingsManager.shared.videoRecordingEnabled
         let isRecording = videoRecorder.isRecording
-        guard videoEnabled, !isRecording else { return }
+        if videoEnabled, !isRecording {
+            let dimensions = cameraManager.videoDimensions
+            let saveDir = SettingsManager.shared.saveLocation
 
-        let dimensions = cameraManager.videoDimensions
-        let saveDir = SettingsManager.shared.saveLocation
-
-        DispatchQueue.main.async { [weak self] in
-            guard SubscriptionManager.shared.hasAccess(to: .videoRecording) else { return }
-            self?.videoRecorder.startRecording(dimensions: dimensions, saveDirectory: saveDir) { [weak self] videoPath in
-                if let videoPath {
-                    self?.updateLastCaptureWithVideo(videoPath: videoPath)
+            DispatchQueue.main.async { [weak self] in
+                guard SubscriptionManager.shared.hasAccess(to: .videoRecording) else { return }
+                self?.videoRecorder.startRecording(dimensions: dimensions, saveDirectory: saveDir) { [weak self] videoPath in
+                    if let videoPath {
+                        self?.updateLastCaptureWithVideo(videoPath: videoPath)
+                    }
                 }
             }
+        }
+
+        // Trigger alarm if pro, enabled, and not in cooldown
+        DispatchQueue.main.async { [weak self] in
+            guard let self,
+                  SubscriptionManager.shared.hasAccess(to: .alarmSiren),
+                  SettingsManager.shared.alarmEnabled,
+                  self.lastAlarmFired.map({ Date().timeIntervalSince($0) >= self.securityActionCooldown }) ?? true
+            else { return }
+            self.lastAlarmFired = Date()
+            AlarmManager.shared.trigger()
+        }
+
+        // Trigger flash alert if pro, enabled, and not in cooldown
+        DispatchQueue.main.async { [weak self] in
+            guard let self,
+                  SubscriptionManager.shared.hasAccess(to: .flashAlert),
+                  SettingsManager.shared.flashAlertEnabled,
+                  self.lastFlashFired.map({ Date().timeIntervalSince($0) >= self.securityActionCooldown }) ?? true
+            else { return }
+            self.lastFlashFired = Date()
+            FlashAlertController.shared.showAlert()
+        }
+
+        // Trigger auto-lock if pro, enabled, and not in cooldown
+        DispatchQueue.main.async { [weak self] in
+            guard let self,
+                  SubscriptionManager.shared.hasAccess(to: .autoLock),
+                  SettingsManager.shared.autoLockEnabled,
+                  self.lastAutoLockFired.map({ Date().timeIntervalSince($0) >= self.securityActionCooldown }) ?? true
+            else { return }
+            self.lastAutoLockFired = Date()
+            AutoLockManager.scheduleLock(afterDelay: Double(SettingsManager.shared.autoLockDelay))
         }
     }
 
