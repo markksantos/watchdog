@@ -77,6 +77,9 @@ class SettingsManager: ObservableObject {
     @Published var autoLockDelay: Int {
         didSet { UserDefaults.standard.set(autoLockDelay, forKey: Keys.autoLockDelay) }
     }
+    @Published var selectedCameraID: String {
+        didSet { UserDefaults.standard.set(selectedCameraID, forKey: Keys.selectedCameraID) }
+    }
 
     /// Computed property delegating to SubscriptionManager
     var isPaid: Bool {
@@ -104,6 +107,7 @@ class SettingsManager: ObservableObject {
         static let stealthModeEnabled = "stealthModeEnabled"
         static let autoLockEnabled = "autoLockEnabled"
         static let autoLockDelay = "autoLockDelay"
+        static let selectedCameraID = "selectedCameraID"
     }
 
     private init() {
@@ -137,6 +141,7 @@ class SettingsManager: ObservableObject {
         self.stealthModeEnabled = defaults.bool(forKey: Keys.stealthModeEnabled)
         self.autoLockEnabled = defaults.bool(forKey: Keys.autoLockEnabled)
         self.autoLockDelay = defaults.object(forKey: Keys.autoLockDelay) as? Int ?? 10
+        self.selectedCameraID = defaults.string(forKey: Keys.selectedCameraID) ?? ""
     }
 
     var historyDayLimit: Int? {

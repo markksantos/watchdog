@@ -10,8 +10,28 @@ class CameraManager: NSObject {
     private var latestSampleBuffer: CMSampleBuffer?
     private let bufferLock = NSLock()
 
+    var currentSession: AVCaptureSession? { captureSession }
+
+    static var availableCameras: [AVCaptureDevice] {
+        AVCaptureDevice.DiscoverySession(
+            deviceTypes: [.builtInWideAngleCamera, .externalUnknown],
+            mediaType: .video,
+            position: .unspecified
+        ).devices
+    }
+
+    private var selectedCamera: AVCaptureDevice? {
+        let selectedID = SettingsManager.shared.selectedCameraID
+        if !selectedID.isEmpty,
+           let device = CameraManager.availableCameras.first(where: { $0.uniqueID == selectedID }) {
+            return device
+        }
+        return AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
+            ?? CameraManager.availableCameras.first
+    }
+
     var videoDimensions: CMVideoDimensions {
-        guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) else {
+        guard let device = selectedCamera else {
             return CMVideoDimensions(width: 640, height: 480)
         }
         return CMVideoFormatDescriptionGetDimensions(device.activeFormat.formatDescription)
@@ -42,7 +62,7 @@ class CameraManager: NSObject {
         let session = AVCaptureSession()
         session.sessionPreset = .medium
 
-        guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front),
+        guard let camera = selectedCamera,
               let input = try? AVCaptureDeviceInput(device: camera),
               session.canAddInput(input) else {
             return

@@ -25,6 +25,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let alarmManager = AlarmManager.shared
     let flashAlertController = FlashAlertController.shared
     let stealthModeManager = StealthModeManager.shared
+    let hotkeyManager = HotkeyManager.shared
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Wire detection captures into the store
@@ -39,6 +40,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             subscriptionManager: subscriptionManager
         )
         wakeDetector.configure(detectionEngine: detectionEngine)
+        hotkeyManager.configure(detectionEngine: detectionEngine)
 
         // Set up notifications (deferred until app has a bundle proxy)
         NotificationManager.shared.setup()

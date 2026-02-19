@@ -152,6 +152,7 @@ class StatusBarController {
             .environmentObject(settingsManager)
             .environmentObject(captureStore)
             .environmentObject(subscriptionManager)
+            .environmentObject(detectionEngine)
 
         let hostingController = NSHostingController(rootView: mainWindowView)
 

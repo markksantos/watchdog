@@ -83,6 +83,11 @@ class DetectionEngine: NSObject, ObservableObject {
         }
     }
 
+    func manualCapture() {
+        guard isMonitoring else { return }
+        captureFrame(type: .alwaysOn, confidence: 1.0)
+    }
+
     func burstCapture(duration: TimeInterval) {
         burstTimer?.invalidate()
         var elapsed: TimeInterval = 0
