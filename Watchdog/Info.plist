@@ -18,6 +18,8 @@
     <string>13.0</string>
     <key>LSUIElement</key>
     <true/>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
     <key>NSCameraUsageDescription</key>
     <string>Watchdog needs camera access to detect and capture photos of anyone approaching your screen.</string>
     <key>NSUserNotificationAlertStyle</key>
