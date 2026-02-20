@@ -28,6 +28,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let hotkeyManager = HotkeyManager.shared
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // Set app icon from bundled .icns
+        if let iconURL = Bundle.main.url(forResource: "AppIcon", withExtension: "icns"),
+           let icon = NSImage(contentsOf: iconURL) {
+            NSApplication.shared.applicationIconImage = icon
+        }
+
         // Wire detection captures into the store
         detectionEngine.onCapture = { [weak self] record in
             self?.captureStore.addCapture(record)

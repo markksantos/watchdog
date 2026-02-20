@@ -13,6 +13,9 @@ let package = Package(
         .executableTarget(
             name: "Watchdog",
             path: "Watchdog",
+            resources: [
+                .copy("Assets.xcassets/AppIcon.icns")
+            ],
             linkerSettings: [
                 .linkedFramework("AppKit"),
                 .linkedFramework("AVFoundation"),
