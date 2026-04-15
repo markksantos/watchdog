@@ -2,6 +2,8 @@
 
 # 👁️ Watchdog
 
+<img src="app-icon.png" width="128" alt="Watchdog icon" />
+
 **macOS webcam monitoring app with face detection, motion detection, and scheduled capture**
 
 [![Swift](https://img.shields.io/badge/Swift-F05138?style=for-the-badge&logo=swift&logoColor=white)](#)
