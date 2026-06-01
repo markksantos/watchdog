@@ -164,3 +164,48 @@ Developer account** and an irreversible product decision (MAS vs DMG): real Stor
 product creation, code-signing, notarization, and producing the shippable artifact. None of
 that can be done autonomously or without paid Apple enrollment. No mock data or stubbed
 features remain in the codebase.
+
+## QA Verification
+
+Reviewed by independent QA agent on 2026-06-01.
+
+### Commands run
+
+```
+swift build              # debug
+swift build -c release   # release
+swift test               # all 26 tests
+bash scripts/build-app.sh
+```
+
+### Real results
+
+- `swift build` (debug): Build complete, 0 errors, 0 warnings. Confirmed.
+- `swift build -c release`: Build complete, 0 errors, 0 warnings. Confirmed.
+- `swift test`: All 26 tests passed (CaptureRecordTests 6, ScheduleConfigTests 10, SubscriptionModelTests 5, TrialManagerTests 5). Confirmed.
+- `bash scripts/build-app.sh`: Assembled `build/Watchdog.app` successfully. Binary, Info.plist, and AppIcon.icns all present in the bundle. Confirmed.
+
+### Claims verified
+
+- 3 overnight commits present (local only, not pushed): confirmed.
+- Zero build warnings in both debug and release: confirmed.
+- 26 passing unit tests: confirmed.
+- `Watchdog.storekit` present with two subscription products (`com.watchdog.pro.monthly` at $3.99 and `com.watchdog.pro.annual` at $29.99 with 7-day free-trial intro offer) in one "Watchdog Pro" group: confirmed.
+- `landing/vercel.json` present with security headers and HSTS; `netlify.toml` absent: confirmed.
+- Landing hero "Download for macOS" CTA now points to GitHub releases (not `#`): confirmed.
+- `.build/` and other artifact directories untracked (git status clean): confirmed.
+
+### Discrepancies
+
+None. All build-agent claims checked out against actual command output.
+
+### Fixes applied
+
+None required.
+
+### Remaining issues
+
+No blocking issues. Non-blocking items already documented in NEEDS FROM MARK:
+- Apple Developer Program account required for code-signing, notarization, and live StoreKit products.
+- App Store Connect subscription products must be created manually with the exact IDs in Watchdog.storekit.
+- Distribution format decision (MAS vs notarized DMG) still open.
