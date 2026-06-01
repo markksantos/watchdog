@@ -33,10 +33,10 @@
 ### Prerequisites
 
 - macOS 13.0+
-- Xcode 15+
+- Xcode 15+ (or the Swift 5.9+ toolchain)
 - Camera access permission
 
-### Installation
+### Run from source (Xcode)
 
 ```bash
 git clone https://github.com/markksantos/watchdog.git
@@ -44,7 +44,32 @@ cd watchdog
 open Package.swift
 ```
 
-Build and run in Xcode. Grant camera permissions when prompted.
+Build and run in Xcode (the `Watchdog` scheme). Grant camera permissions when prompted.
+
+To exercise the paywall and subscription flow locally, point the run scheme at the
+bundled StoreKit configuration: **Product → Scheme → Edit Scheme → Run → Options →
+StoreKit Configuration → `Watchdog.storekit`**. This makes the two Pro products
+(`com.watchdog.pro.monthly`, `com.watchdog.pro.annual`) and the 7-day annual free
+trial purchasable in StoreKit Testing without an App Store Connect account.
+
+### Build a distributable `.app`
+
+```bash
+swift build -c release
+bash scripts/build-app.sh   # assembles build/Watchdog.app
+```
+
+`scripts/make_icon.py` regenerates the app icon into `Watchdog/Resources/AppIcon.icns`
+(requires Pillow + the macOS `iconutil`).
+
+### Test
+
+```bash
+swift test   # 26 unit tests: trial logic, schedule windowing, gating, persistence
+```
+
+CI (`.github/workflows/ci.yml`) runs debug + release builds, the full test suite, and
+verifies the assembled `.app` bundle on every push and PR.
 
 ## 🛠️ Tech Stack
 
@@ -62,37 +87,35 @@ Build and run in Xcode. Grant camera permissions when prompted.
 ## 📁 Project Structure
 
 ```
-Watchdog/
-├── WatchdogApp.swift              # Entry point & AppDelegate
-├── Detection/
-│   ├── DetectionEngine.swift      # Core detection orchestrator
-│   ├── CameraManager.swift        # Webcam input management
-│   ├── FaceDetector.swift         # Vision-based face detection
-│   ├── MotionDetector.swift       # Pixel-diff motion detection
-│   └── VideoRecorder.swift        # H.264 video recording
-├── Storage/
-│   └── CaptureStore.swift         # JSON-based capture persistence
-├── Models/
-│   ├── CaptureRecord.swift        # Detection data model
-│   ├── SettingsManager.swift      # User preferences
-│   └── ScheduleConfig.swift       # Scheduled monitoring config
-├── Monetization/
-│   ├── SubscriptionManager.swift  # StoreKit 2 subscriptions
-│   ├── TrialManager.swift         # Trial period logic
-│   └── PaywallView.swift          # Upgrade UI
-├── UI/
-│   ├── MainWindow/
-│   │   ├── MainWindowView.swift   # Grid gallery
-│   │   └── CaptureDetailView.swift # Full-screen capture view
-│   ├── MenuBar/
-│   │   ├── StatusBarController.swift # Menu bar management
-│   │   └── PopoverView.swift      # Quick-access popover
-│   └── Preferences/
-│       └── PreferencesView.swift  # Settings window
-└── Utilities/
-    ├── WakeDetector.swift         # Sleep/wake detection
-    └── PDFExporter.swift          # PDF report generation
+.
+├── Package.swift                  # SwiftPM manifest (executable + test target)
+├── Watchdog.storekit              # StoreKit Testing config (Pro products + trial)
+├── Watchdog/
+│   ├── WatchdogApp.swift          # Entry point & AppDelegate
+│   ├── Detection/                 # DetectionEngine, Camera/Face/Motion, VideoRecorder
+│   ├── Storage/CaptureStore.swift # JSON-based capture persistence + free-tier limit
+│   ├── Models/                    # CaptureRecord, SettingsManager, ScheduleConfig, ProFeature
+│   ├── Monetization/              # SubscriptionManager (StoreKit 2), TrialManager, PaywallView
+│   ├── Notifications/             # NotificationManager, WebhookManager
+│   ├── UI/                        # MenuBar, MainWindow (gallery/live/stats), Preferences
+│   ├── Utilities/                 # Alarm, Flash, AutoLock, Stealth, Hotkey, Power, Wake, PDF
+│   ├── Resources/AppIcon.icns     # App icon (bundled as an SPM resource)
+│   ├── Info.plist
+│   └── Watchdog.entitlements      # camera, network.client, photos-library
+├── Tests/WatchdogTests/           # XCTest: trial, schedule, gating, persistence
+├── scripts/                       # build-app.sh, make_icon.py
+├── landing/                       # Marketing page (index.html) + vercel.json
+└── .github/workflows/ci.yml       # Build + test + bundle verification
 ```
+
+## 💳 Free vs. Pro
+
+The free tier keeps 3 days of capture history and the three core detection modes.
+A 7-day trial unlocks everything; afterward the 10 Pro capabilities
+(unlimited history, scheduling, video recording, webhooks, advanced PDF, stats
+dashboard, alarm, flash, stealth, auto-lock) are gated behind a StoreKit 2
+subscription. Every Pro gate is enforced at runtime in both the UI and the
+detection engine via `SubscriptionManager.hasAccess(to:)`.
 
 ## 📄 License
 
