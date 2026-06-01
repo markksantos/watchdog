@@ -13,8 +13,12 @@ let package = Package(
         .executableTarget(
             name: "Watchdog",
             path: "Watchdog",
+            exclude: [
+                "Info.plist",
+                "Watchdog.entitlements"
+            ],
             resources: [
-                .copy("Assets.xcassets/AppIcon.icns")
+                .copy("Resources/AppIcon.icns")
             ],
             linkerSettings: [
                 .linkedFramework("AppKit"),
@@ -22,6 +26,11 @@ let package = Package(
                 .linkedFramework("StoreKit"),
                 .linkedFramework("AVKit")
             ]
+        ),
+        .testTarget(
+            name: "WatchdogTests",
+            dependencies: ["Watchdog"],
+            path: "Tests/WatchdogTests"
         )
     ]
 )

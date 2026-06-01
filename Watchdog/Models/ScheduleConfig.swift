@@ -32,13 +32,12 @@ struct ScheduleConfig: Codable, Equatable {
     var endMinute: Int = 0
     var activeWeekdays: Set<Weekday> = Set(Weekday.allCases)
 
-    /// Returns true if the current time falls within the configured schedule window.
-    /// Supports overnight windows (e.g., 9 PM to 7 AM).
-    func isCurrentlyActive() -> Bool {
+    /// Returns true if the given reference time falls within the configured schedule window.
+    /// Supports overnight windows (e.g., 9 PM to 7 AM). `now` and `calendar` are injectable
+    /// so the windowing logic can be unit-tested deterministically; production callers use
+    /// the defaults (current wall clock, current calendar).
+    func isCurrentlyActive(now: Date = Date(), calendar: Calendar = .current) -> Bool {
         guard isEnabled else { return true } // If scheduling disabled, always active
-
-        let calendar = Calendar.current
-        let now = Date()
 
         let currentHour = calendar.component(.hour, from: now)
         let currentMinute = calendar.component(.minute, from: now)

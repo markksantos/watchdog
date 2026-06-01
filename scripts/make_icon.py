@@ -189,15 +189,17 @@ def main():
                 cache[sz] = draw_banana_icon(sz)
             cache[sz].save(os.path.join(iconset_dir, name))
 
-        # Generate .icns
-        icns_path = os.path.join(project_root, 'Watchdog', 'Assets.xcassets', 'AppIcon.icns')
+        # Generate .icns into the SPM resource folder
+        resources_dir = os.path.join(project_root, 'Watchdog', 'Resources')
+        os.makedirs(resources_dir, exist_ok=True)
+        icns_path = os.path.join(resources_dir, 'AppIcon.icns')
         result = subprocess.run(
             ['iconutil', '-c', 'icns', iconset_dir, '-o', icns_path],
             capture_output=True, text=True,
         )
         if result.returncode != 0:
             print(f'iconutil error: {result.stderr}')
-            fallback = os.path.join(project_root, 'Watchdog', 'Assets.xcassets', 'AppIcon.png')
+            fallback = os.path.join(resources_dir, 'AppIcon.png')
             draw_banana_icon(1024).save(fallback)
             print(f'Saved fallback PNG to {fallback}')
             return fallback

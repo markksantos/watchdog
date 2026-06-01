@@ -196,21 +196,19 @@ struct ChartsStatsView: View {
 
     @ViewBuilder
     private func chartContent(for data: [(date: Date, count: Int)]) -> some View {
-        if #available(macOS 14, *) {
-            Charts.Chart(data, id: \.date) { item in
-                Charts.LineMark(
-                    x: .value("Date", item.date),
-                    y: .value("Count", item.count)
-                )
-                .foregroundStyle(.blue)
-                Charts.AreaMark(
-                    x: .value("Date", item.date),
-                    y: .value("Count", item.count)
-                )
-                .foregroundStyle(.blue.opacity(0.1))
-            }
-            .frame(height: 200)
+        Charts.Chart(data, id: \.date) { item in
+            Charts.LineMark(
+                x: .value("Date", item.date),
+                y: .value("Count", item.count)
+            )
+            .foregroundStyle(.blue)
+            Charts.AreaMark(
+                x: .value("Date", item.date),
+                y: .value("Count", item.count)
+            )
+            .foregroundStyle(.blue.opacity(0.1))
         }
+        .frame(height: 200)
     }
 
     private var detectionTypeChart: some View {

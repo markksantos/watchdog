@@ -3,18 +3,29 @@ import Foundation
 class TrialManager {
     static let shared = TrialManager()
 
-    private let trialDuration: Int = 7 // days
+    private let trialDuration: Int // days
     private let firstLaunchKey = "watchdog.firstLaunchDate"
+    private let defaults: UserDefaults
+    private let now: () -> Date
 
-    private init() {
+    /// Designated initializer. Injectable for tests; the app uses `.shared`.
+    init(
+        defaults: UserDefaults = .standard,
+        trialDuration: Int = 7,
+        now: @escaping () -> Date = { Date() }
+    ) {
+        self.defaults = defaults
+        self.trialDuration = trialDuration
+        self.now = now
+
         // Record first launch date if not already set
-        if UserDefaults.standard.object(forKey: firstLaunchKey) == nil {
-            UserDefaults.standard.set(Date(), forKey: firstLaunchKey)
+        if defaults.object(forKey: firstLaunchKey) == nil {
+            defaults.set(now(), forKey: firstLaunchKey)
         }
     }
 
     var firstLaunchDate: Date {
-        UserDefaults.standard.object(forKey: firstLaunchKey) as? Date ?? Date()
+        defaults.object(forKey: firstLaunchKey) as? Date ?? now()
     }
 
     var isTrialActive: Bool {
@@ -22,7 +33,7 @@ class TrialManager {
     }
 
     var daysRemaining: Int {
-        let elapsed = Calendar.current.dateComponents([.day], from: firstLaunchDate, to: Date()).day ?? 0
+        let elapsed = Calendar.current.dateComponents([.day], from: firstLaunchDate, to: now()).day ?? 0
         return max(0, trialDuration - elapsed)
     }
 
