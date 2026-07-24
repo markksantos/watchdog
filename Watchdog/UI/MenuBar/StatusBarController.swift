@@ -24,12 +24,15 @@ class StatusBarController {
         self.detectionEngine = detectionEngine
         self.subscriptionManager = subscriptionManager
 
-        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        // Variable length so the optional capture count has room; the glyph alone still
+        // renders at its natural square width.
+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         popover = NSPopover()
 
         configurePopover()
         configureButton()
         observeMonitoringState()
+        AppearanceSettings.shared.applyTheme()
     }
 
     private func configurePopover() {
@@ -45,49 +48,84 @@ class StatusBarController {
         .environmentObject(detectionEngine)
         .environmentObject(subscriptionManager)
 
-        popover.contentSize = NSSize(width: 320, height: 460)
+        // Shared with `PopoverView.frame`. These were two independent literals, which is how
+        // the popover's content ended up wider than the window hosting it.
+        popover.contentSize = NSSize(
+            width: WatchdogMetrics.popoverWidth,
+            height: WatchdogMetrics.popoverHeight
+        )
         popover.behavior = .semitransient
         popover.contentViewController = NSHostingController(rootView: popoverView)
     }
 
     private func configureButton() {
         guard let button = statusItem.button else { return }
-        let config = NSImage.SymbolConfiguration(pointSize: 16, weight: .medium)
-        let image = NSImage(systemSymbolName: "eye.fill", accessibilityDescription: "Watchdog")?
-            .withSymbolConfiguration(config)
-        image?.isTemplate = true
-        button.image = image
         button.action = #selector(togglePopover)
         button.target = self
-        updateIcon(isMonitoring: settingsManager.isMonitoring)
+        button.imagePosition = .imageLeading
+        button.font = .monospacedDigitSystemFont(ofSize: 11, weight: .medium)
+        updateIcon()
     }
 
     private func observeMonitoringState() {
         settingsManager.$isMonitoring
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] isMonitoring in
-                self?.updateIcon(isMonitoring: isMonitoring)
+            .sink { [weak self] _ in self?.updateIcon() }
+            .store(in: &cancellables)
+
+        // The glyph, and whether the capture count is shown, are both user preferences.
+        let appearance = AppearanceSettings.shared
+        appearance.$menuBarIcon
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.updateIcon() }
+            .store(in: &cancellables)
+
+        appearance.$showMenuBarCount
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.updateIcon() }
+            .store(in: &cancellables)
+
+        captureStore.$captures
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard AppearanceSettings.shared.showMenuBarCount else { return }
+                self?.updateIcon()
             }
             .store(in: &cancellables)
     }
 
-    private func updateIcon(isMonitoring: Bool) {
+    /// Redraws the menu bar item for the current monitoring state and appearance preferences.
+    ///
+    /// The item itself is never hidden — only its glyph changes — because concealing that the
+    /// camera may be recording is both dishonest and an App Review failure.
+    private func updateIcon() {
         guard let button = statusItem.button else { return }
+
+        let isMonitoring = settingsManager.isMonitoring
+        let style = AppearanceSettings.shared.menuBarIcon
+        let symbolName = isMonitoring ? style.activeSymbol : style.idleSymbol
         let config = NSImage.SymbolConfiguration(pointSize: 16, weight: .medium)
 
+        let image = NSImage(
+            systemSymbolName: symbolName,
+            accessibilityDescription: isMonitoring ? "Watchdog — monitoring" : "Watchdog — idle"
+        )?.withSymbolConfiguration(config)
+
         if isMonitoring {
-            // Green tinted icon when monitoring
-            let image = NSImage(systemSymbolName: "eye.fill", accessibilityDescription: "Watchdog")?
-                .withSymbolConfiguration(config)
+            // Green while the camera is live, matching the palette's "live" token.
             image?.isTemplate = false
-            let coloredImage = image?.image(with: .systemGreen)
-            button.image = coloredImage
+            button.image = image?.image(with: .systemGreen)
         } else {
-            // Template image — macOS auto-adapts to light/dark menu bar
-            let image = NSImage(systemSymbolName: "eye.fill", accessibilityDescription: "Watchdog")?
-                .withSymbolConfiguration(config)
+            // Template image — macOS adapts it to a light or dark menu bar automatically.
             image?.isTemplate = true
             button.image = image
+        }
+
+        if AppearanceSettings.shared.showMenuBarCount {
+            let count = captureStore.todayCount
+            button.title = count > 0 ? " \(count)" : ""
+        } else {
+            button.title = ""
         }
     }
 
@@ -134,8 +172,12 @@ class StatusBarController {
 
         let window = NSWindow(contentViewController: hostingController)
         window.title = "Preferences"
-        window.setContentSize(NSSize(width: 480, height: 780))
-        window.styleMask = [.titled, .closable]
+        window.setContentSize(NSSize(
+            width: WatchdogMetrics.preferencesWidth,
+            height: WatchdogMetrics.preferencesHeight
+        ))
+        window.styleMask = [.titled, .closable, .resizable]
+        window.minSize = NSSize(width: WatchdogMetrics.preferencesWidth, height: 460)
         window.center()
         window.makeKeyAndOrderFront(nil)
         preferencesWindow = window

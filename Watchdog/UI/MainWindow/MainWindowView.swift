@@ -5,6 +5,7 @@ struct MainWindowView: View {
     @EnvironmentObject var settingsManager: SettingsManager
     @EnvironmentObject var subscriptionManager: SubscriptionManager
     @EnvironmentObject var detectionEngine: DetectionEngine
+    @ObservedObject private var appearance = AppearanceSettings.shared
 
     @State private var showDeleteAllAlert = false
     @State private var selectedCapture: CaptureRecord?
@@ -13,7 +14,12 @@ struct MainWindowView: View {
     @State private var searchText = ""
     @State private var filterDetectionType: DetectionMode?
 
-    private let columns = [GridItem(.adaptive(minimum: 160), spacing: 12)]
+    private var accent: Color { appearance.accentColor }
+
+    /// Thumbnail width follows the Appearance tab's gallery slider.
+    private var columns: [GridItem] {
+        [GridItem(.adaptive(minimum: appearance.galleryThumbnailSize), spacing: 12)]
+    }
 
     var body: some View {
         NavigationStack {
@@ -99,7 +105,7 @@ struct MainWindowView: View {
 
                     HStack(spacing: 16) {
                         Circle()
-                            .fill(Color.green)
+                            .fill(WatchdogColor.live)
                             .frame(width: 8, height: 8)
                         Text("Live — \(settingsManager.detectionMode.rawValue)")
                             .font(.caption)
@@ -207,10 +213,10 @@ struct MainWindowView: View {
                 Text(label)
                     .font(.caption)
             }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(isActive ? Color.accentColor.opacity(0.15) : Color.secondary.opacity(0.08))
-            .foregroundColor(isActive ? .accentColor : .secondary)
+            .padding(.horizontal, 9)
+            .padding(.vertical, 5)
+            .background(isActive ? accent : Color.secondary.opacity(0.10))
+            .foregroundColor(isActive ? .white : .secondary)
             .clipShape(Capsule())
         }
         .buttonStyle(.plain)
@@ -260,7 +266,10 @@ struct MainWindowView: View {
                         LazyVGrid(columns: columns, spacing: 12) {
                             ForEach(captures) { capture in
                                 NavigationLink(value: capture.id) {
-                                    CaptureCell(capture: capture)
+                                    CaptureCell(
+                                        capture: capture,
+                                        minWidth: appearance.galleryThumbnailSize
+                                    )
                                 }
                                 .buttonStyle(.plain)
                                 .contextMenu {
@@ -338,6 +347,10 @@ struct MainWindowView: View {
 
 struct CaptureCell: View {
     let capture: CaptureRecord
+    /// Matches the grid's adaptive minimum so cells scale with the Appearance slider.
+    var minWidth: CGFloat = 160
+
+    private var minHeight: CGFloat { minWidth * 0.75 }
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -345,12 +358,12 @@ struct CaptureCell: View {
                 Image(nsImage: nsImage)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(minWidth: 160, minHeight: 120)
+                    .frame(minWidth: minWidth, minHeight: minHeight)
                     .clipped()
             } else {
                 Rectangle()
                     .fill(Color.secondary.opacity(0.15))
-                    .frame(minWidth: 160, minHeight: 120)
+                    .frame(minWidth: minWidth, minHeight: minHeight)
                     .overlay(
                         Image(systemName: "photo")
                             .font(.title2)

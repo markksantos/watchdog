@@ -5,6 +5,7 @@ struct PopoverView: View {
     @EnvironmentObject var captureStore: CaptureStore
     @EnvironmentObject var detectionEngine: DetectionEngine
     @EnvironmentObject var subscriptionManager: SubscriptionManager
+    @ObservedObject private var appearance = AppearanceSettings.shared
 
     @State private var showCameraPermissionAlert = false
     @State private var showRecordingNotice = false
@@ -13,76 +14,38 @@ struct PopoverView: View {
     var openPreferences: () -> Void
     var openPaywall: () -> Void
 
+    private var accent: Color { appearance.accentColor }
+    private var isMonitoring: Bool { settingsManager.isMonitoring }
+
     var body: some View {
         VStack(spacing: 0) {
-            // Header
             header
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
-                .padding(.bottom, 12)
 
             Divider()
 
-            // Monitoring toggle
-            monitoringToggle
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
+            ScrollView {
+                VStack(spacing: 12) {
+                    statusCard
+                    detectionModeCard
+                    lastCaptureCard
 
-            // Manual capture button
-            if settingsManager.isMonitoring {
-                Button(action: { detectionEngine.manualCapture() }) {
-                    HStack {
-                        Image(systemName: "camera.shutter.button")
-                        Text("Capture Now")
+                    if !subscriptionManager.isProUser {
+                        upgradeButton
                     }
-                    .frame(maxWidth: .infinity)
                 }
-                .controlSize(.small)
-                .buttonStyle(.bordered)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 8)
-            }
-
-            // Schedule status
-            if settingsManager.scheduleConfig.isEnabled {
-                scheduleStatus
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 12)
+                .padding(12)
             }
 
             Divider()
 
-            // Last capture preview
-            lastCapturePreview
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-
-            Divider()
-
-            // Detection mode
-            detectionModePicker
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-
-            Divider()
-
-            // Upgrade button for free users
-            if !subscriptionManager.isProUser {
-                upgradeButton
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-
-                Divider()
-            }
-
-            Spacer()
-
-            // Bottom actions
             bottomActions
-                .padding(.horizontal, 16)
-                .padding(.bottom, 16)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
         }
-        .frame(width: 320, height: 460)
+        .frame(
+            width: WatchdogMetrics.popoverWidth,
+            height: WatchdogMetrics.popoverHeight
+        )
         .alert("Camera Access Required", isPresented: $showCameraPermissionAlert) {
             Button("Open System Settings") {
                 if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Camera") {
@@ -117,115 +80,169 @@ struct PopoverView: View {
     private var header: some View {
         HStack(spacing: 8) {
             Image(systemName: "eye.fill")
-                .font(.title2)
-                .foregroundColor(.accentColor)
+                .font(.system(size: 16))
+                .foregroundColor(accent)
+
             Text("Watchdog")
-                .font(.headline)
+                .font(.system(size: 14, weight: .semibold))
 
             subscriptionBadge
 
             Spacer()
-            Circle()
-                .fill(settingsManager.isMonitoring ? Color.green : Color.gray)
-                .frame(width: 8, height: 8)
+
+            HStack(spacing: 5) {
+                Circle()
+                    .fill(isMonitoring ? WatchdogColor.live : Color.secondary.opacity(0.5))
+                    .frame(width: 7, height: 7)
+                Text(isMonitoring ? "Live" : "Idle")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(isMonitoring ? WatchdogColor.live : .secondary)
+            }
         }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
     }
 
     @ViewBuilder
     private var subscriptionBadge: some View {
         switch subscriptionManager.status {
         case .subscribed:
-            Text("PRO")
-                .font(.caption2)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
-                .background(Color.blue)
-                .clipShape(Capsule())
-        case .trial:
-            Text("TRIAL")
-                .font(.caption2)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
-                .background(Color.orange)
-                .clipShape(Capsule())
+            badge("PRO", color: WatchdogColor.pro)
+        case .trial(let days):
+            badge("TRIAL · \(days)D", color: WatchdogColor.warn)
         case .free, .expired:
             EmptyView()
         }
     }
 
-    // MARK: - Schedule Status
-
-    private var scheduleStatus: some View {
-        HStack(spacing: 6) {
-            Image(systemName: "clock.badge.checkmark")
-                .font(.caption)
-                .foregroundColor(.secondary)
-            Text("Scheduled: \(settingsManager.scheduleConfig.formattedTimeRange)")
-                .font(.caption)
-                .foregroundColor(.secondary)
-            Spacer()
-        }
+    private func badge(_ text: String, color: Color) -> some View {
+        Text(text)
+            .font(.system(size: 9, weight: .bold))
+            .foregroundColor(.white)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(Capsule().fill(color))
     }
 
-    // MARK: - Monitoring Toggle
+    // MARK: - Status
 
-    private var monitoringToggle: some View {
-        Toggle(isOn: Binding(
-            get: { settingsManager.isMonitoring },
-            set: { newValue in
-                if newValue {
-                    detectionEngine.startMonitoring()
-                } else {
-                    detectionEngine.stopMonitoring()
+    private var statusCard: some View {
+        VStack(spacing: 10) {
+            Toggle(isOn: Binding(
+                get: { isMonitoring },
+                set: { $0 ? detectionEngine.startMonitoring() : detectionEngine.stopMonitoring() }
+            )) {
+                HStack(spacing: 8) {
+                    Image(systemName: isMonitoring ? "video.fill" : "video.slash.fill")
+                        .font(.system(size: 13))
+                        .foregroundColor(isMonitoring ? WatchdogColor.live : .secondary)
+                    Text("Monitoring")
+                        .font(.system(size: 13, weight: .medium))
+                    Spacer()
                 }
             }
-        )) {
-            HStack(spacing: 8) {
-                Image(systemName: settingsManager.isMonitoring ? "video.fill" : "video.slash.fill")
-                    .foregroundColor(settingsManager.isMonitoring ? .green : .secondary)
-                Text("Monitoring")
-                    .font(.body)
+            .toggleStyle(.switch)
+            .tint(WatchdogColor.live)
+
+            if isMonitoring {
+                Button(action: { detectionEngine.manualCapture() }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "camera.shutter.button")
+                        Text("Capture Now")
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .controlSize(.small)
+                .buttonStyle(.borderedProminent)
+                .tint(accent)
+            }
+
+            if settingsManager.scheduleConfig.isEnabled {
+                HStack(spacing: 6) {
+                    Image(systemName: "clock.badge.checkmark")
+                        .font(.system(size: 10))
+                    Text("Scheduled \(settingsManager.scheduleConfig.formattedTimeRange)")
+                        .font(.system(size: 11))
+                    Spacer()
+                }
+                .foregroundColor(.secondary)
             }
         }
-        .toggleStyle(.switch)
+        .padding(12)
+        .frame(maxWidth: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: WatchdogMetrics.cardCornerRadius)
+                .fill(WatchdogColor.card)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: WatchdogMetrics.cardCornerRadius)
+                .strokeBorder(
+                    isMonitoring ? WatchdogColor.live.opacity(0.4) : WatchdogColor.cardBorder,
+                    lineWidth: 1
+                )
+        )
     }
 
-    // MARK: - Last Capture Preview
+    // MARK: - Detection mode
 
-    private var lastCapturePreview: some View {
+    /// Previously an AppKit segmented picker carrying full-length labels inside a 320pt
+    /// popover, which clipped the outer segments at both edges. Equal-width pills with short
+    /// names fit the space and degrade by shrinking text rather than cutting it off.
+    private var detectionModeCard: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Last Capture")
-                .font(.subheadline)
+            Text("DETECTION MODE")
+                .font(.system(size: 10, weight: .semibold))
                 .foregroundColor(.secondary)
+                .kerning(0.4)
 
-            HStack(spacing: 12) {
-                if let lastCapture = captureStore.captures.first {
-                    if let nsImage = NSImage(contentsOf: lastCapture.imageURL) {
-                        Image(nsImage: nsImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 80, height: 80)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                    } else {
-                        placeholderThumbnail
-                    }
+            SegmentedPills(
+                options: DetectionMode.allCases,
+                selection: $settingsManager.detectionMode,
+                accent: accent,
+                maxPerRow: 3
+            ) { mode in
+                IconPillLabel(symbol: mode.icon, title: mode.shortName)
+            }
+        }
+    }
+
+    // MARK: - Last capture
+
+    private var lastCaptureCard: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("LAST CAPTURE")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundColor(.secondary)
+                    .kerning(0.4)
+                Spacer()
+                if captureStore.todayCount > 0 {
+                    Text("\(captureStore.todayCount) today")
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            HStack(spacing: 10) {
+                if let lastCapture = captureStore.captures.first,
+                   let nsImage = NSImage(contentsOf: lastCapture.imageURL) {
+                    Image(nsImage: nsImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 68, height: 68)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(lastCapture.shortTimestamp)
-                            .font(.caption)
+                            .font(.system(size: 12, weight: .medium))
                         Label(lastCapture.detectionType.rawValue, systemImage: lastCapture.detectionType.icon)
-                            .font(.caption2)
+                            .font(.system(size: 10))
                             .foregroundColor(.secondary)
                     }
                 } else {
                     placeholderThumbnail
-
                     Text("No captures yet")
-                        .font(.caption)
+                        .font(.system(size: 12))
                         .foregroundColor(.secondary)
                 }
 
@@ -233,7 +250,7 @@ struct PopoverView: View {
             }
 
             Button(action: openMainWindow) {
-                HStack {
+                HStack(spacing: 6) {
                     Image(systemName: "photo.on.rectangle.angled")
                     Text("View All Captures")
                 }
@@ -245,57 +262,38 @@ struct PopoverView: View {
 
     private var placeholderThumbnail: some View {
         RoundedRectangle(cornerRadius: 8)
-            .fill(Color.secondary.opacity(0.15))
-            .frame(width: 80, height: 80)
+            .fill(Color.secondary.opacity(0.12))
+            .frame(width: 68, height: 68)
             .overlay(
                 Image(systemName: "camera")
-                    .font(.title3)
+                    .font(.system(size: 18))
                     .foregroundColor(.secondary)
             )
     }
 
-    // MARK: - Upgrade Button
+    // MARK: - Upgrade
 
     private var upgradeButton: some View {
         Button(action: openPaywall) {
-            HStack {
+            HStack(spacing: 6) {
                 Image(systemName: "star.fill")
-                    .foregroundColor(.yellow)
                 Text("Upgrade to Pro")
             }
             .frame(maxWidth: .infinity)
         }
         .controlSize(.small)
         .buttonStyle(.borderedProminent)
+        .tint(WatchdogColor.pro)
     }
 
-    // MARK: - Detection Mode Picker
-
-    private var detectionModePicker: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Detection Mode")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-
-            Picker("", selection: $settingsManager.detectionMode) {
-                ForEach(DetectionMode.allCases, id: \.self) { mode in
-                    Label(mode.rawValue, systemImage: mode.icon)
-                        .tag(mode)
-                }
-            }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-        }
-    }
-
-    // MARK: - Bottom Actions
+    // MARK: - Bottom actions
 
     private var bottomActions: some View {
-        VStack(spacing: 8) {
+        HStack(spacing: 8) {
             Button(action: openPreferences) {
-                HStack {
-                    Image(systemName: "gear")
-                    Text("Preferences...")
+                HStack(spacing: 5) {
+                    Image(systemName: "gearshape.fill")
+                    Text("Preferences")
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -304,9 +302,9 @@ struct PopoverView: View {
             Button(role: .destructive, action: {
                 NSApplication.shared.terminate(nil)
             }) {
-                HStack {
+                HStack(spacing: 5) {
                     Image(systemName: "power")
-                    Text("Quit Watchdog")
+                    Text("Quit")
                 }
                 .frame(maxWidth: .infinity)
             }

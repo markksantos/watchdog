@@ -46,6 +46,19 @@ class DetectionEngine: NSObject, ObservableObject {
                 self.switchAnalyzer()
             }
             .store(in: &cancellables)
+
+        // The Always-On timer is built with the interval that was current when monitoring
+        // started, so a change made mid-session has to rebuild it to take effect.
+        CaptureSettings.shared.$intervalSeconds
+            .dropFirst()
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let self, self.isMonitoring,
+                      SettingsManager.shared.detectionMode == .alwaysOn else { return }
+                self.switchAnalyzer()
+            }
+            .store(in: &cancellables)
     }
 
     func startMonitoring() {
@@ -125,7 +138,7 @@ class DetectionEngine: NSObject, ObservableObject {
             currentAnalyzer = motionDetector
         case .alwaysOn:
             currentAnalyzer = nil
-            let interval = TimeInterval(SettingsManager.shared.captureInterval.rawValue)
+            let interval = TimeInterval(CaptureSettings.shared.intervalSeconds)
             alwaysOnTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
                 self?.captureFrame(type: .alwaysOn, confidence: 1.0)
             }

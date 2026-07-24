@@ -123,14 +123,19 @@ class CameraManager: NSObject {
 
         let ciImage = CIImage(cvPixelBuffer: imageBuffer)
         let context = CIContext()
-        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return nil }
+        guard let fullSizeImage = context.createCGImage(ciImage, from: ciImage.extent) else { return nil }
+
+        // Scale to the configured resolution before encoding, so the quality setting controls
+        // the stored pixel count and not only the JPEG compression factor.
+        let quality = CaptureSettings.shared
+        let cgImage = CaptureSettings.scale(fullSizeImage, toFit: quality.targetPixelSize)
 
         let nsImage = NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height))
         guard let tiffData = nsImage.tiffRepresentation,
               let bitmap = NSBitmapImageRep(data: tiffData),
               let jpegData = bitmap.representation(
                   using: .jpeg,
-                  properties: [.compressionFactor: SettingsManager.shared.photoQuality.compressionFactor]
+                  properties: [.compressionFactor: quality.compression]
               ) else {
             return nil
         }
