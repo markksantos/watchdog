@@ -492,7 +492,10 @@
     /* ================================================================== */
     /*  TESTIMONIALS (glassmorphism)                                        */
     /* ================================================================== */
-    .testimonials-section { background: var(--bg); }
+    .price-legal {
+      margin: 12px 0 0; font-size: 11px; line-height: 1.5;
+      color: var(--muted); text-align: left; opacity: 0.85;
+    }
 
     .testimonials-masonry {
       display: grid;
@@ -940,17 +943,17 @@
         <div class="bento-card bento-wide reveal stagger-4">
           <div class="bento-icon"><i class="ph-duotone ph-calendar-check"></i></div>
           <h3>Scheduled Monitoring</h3>
-          <p>Set monitoring windows by day and time. Perfect for overnight office monitoring or weekend surveillance. Pair with stealth mode for invisible, hands-off operation.</p>
+          <p>Set monitoring windows by day and time, so Watchdog only watches your desk when you want it to.</p>
         </div>
         <div class="bento-card reveal stagger-5">
-          <div class="bento-icon"><i class="ph-duotone ph-webhooks-logo"></i></div>
-          <h3>Webhook Alerts</h3>
-          <p>Push real-time alerts to Slack, Discord, or any webhook endpoint.</p>
+          <div class="bento-icon"><i class="ph-duotone ph-hard-drives"></i></div>
+          <h3>Stays On Your Mac</h3>
+          <p>No account, no analytics, no network connections at all. Captures are written to your disk and go nowhere else.</p>
         </div>
         <div class="bento-card reveal stagger-6">
-          <div class="bento-icon"><i class="ph-duotone ph-eye-closed"></i></div>
-          <h3>Stealth Mode</h3>
-          <p>Hide the icon entirely. Run silent, run invisible. No visible trace.</p>
+          <div class="bento-icon"><i class="ph-duotone ph-moon"></i></div>
+          <h3>Screen Dim</h3>
+          <p>Covers your desktop while you&rsquo;re away so the room can&rsquo;t read it. Lifts with a click, a shortcut, or on its own.</p>
         </div>
       </div>
     </div>
@@ -986,58 +989,6 @@
     </div>
   </section>
 
-  <!-- ================================================================ -->
-  <!--  TESTIMONIALS (glassmorphism, masonry)                            -->
-  <!-- ================================================================ -->
-  <section class="testimonials-section">
-    <div class="container">
-      <p class="section-label reveal"><i class="ph-light ph-chat-circle-text"></i> Testimonials</p>
-      <h2 class="section-title reveal">Trusted by <span class="serif">thoughtful</span> people</h2>
-      <p class="section-sub reveal">Real feedback from Watchdog users.</p>
-
-      <div class="testimonials-masonry">
-        <div class="testimonial-card tall reveal stagger-1">
-          <div class="testimonial-stars">
-            <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i>
-          </div>
-          <blockquote>"Finally a security app that <span class="serif-quote">doesn't phone home</span>. Runs silently, uses almost no CPU, and the webhook alerts are perfect for my home office setup. Exactly what I needed."</blockquote>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">M</div>
-            <div>
-              <div class="testimonial-name">Marcus T.</div>
-              <div class="testimonial-role">Remote Developer</div>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial-card reveal stagger-2">
-          <div class="testimonial-stars">
-            <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i>
-          </div>
-          <blockquote>"I use scheduled monitoring to watch my studio overnight. Motion detection is surprisingly accurate."</blockquote>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">S</div>
-            <div>
-              <div class="testimonial-name">Sarah K.</div>
-              <div class="testimonial-role">Photographer</div>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial-card reveal stagger-3">
-          <div class="testimonial-stars">
-            <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i>
-          </div>
-          <blockquote>"Native Swift, no Electron bloat. The face detection using Vision framework is <span class="serif-quote">fast and reliable</span>. This is how Mac apps should be built."</blockquote>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">J</div>
-            <div>
-              <div class="testimonial-name">James L.</div>
-              <div class="testimonial-role">iOS Engineer</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- ================================================================ -->
   <!--  PRICING (glassmorphism)                                          -->
@@ -1070,12 +1021,13 @@
             <li><i class="ph-light ph-check"></i> Everything in Free</li>
             <li><i class="ph-light ph-check"></i> Video recording</li>
             <li><i class="ph-light ph-check"></i> Scheduled monitoring</li>
-            <li><i class="ph-light ph-check"></i> Webhook alerts</li>
             <li><i class="ph-light ph-check"></i> PDF export reports</li>
-            <li><i class="ph-light ph-check"></i> Stealth mode</li>
+            <li><i class="ph-light ph-check"></i> Unlimited capture history</li>
+            <li><i class="ph-light ph-check"></i> Screen dim</li>
             <li><i class="ph-light ph-check"></i> Multi-camera support</li>
           </ul>
           <a href="#download" class="btn-card filled">Start 7-Day Free Trial</a>
+          <p class="price-legal">7-day free trial, then $29.99/year. Renews automatically unless cancelled at least 24 hours before the period ends. Cancel anytime in System Settings &rarr; Apple Account &rarr; Subscriptions.</p>
         </div>
       </div>
     </div>
@@ -1159,12 +1111,14 @@
     <div class="footer-inner">
       <div class="footer-left">
         <div class="nav-logo-icon"><i class="ph-light ph-shield-check"></i></div>
-        &copy; 2025 Watchdog
+        &copy; 2026 Mark Studios LLC
       </div>
       <ul class="footer-links">
         <li><a href="https://github.com/markksantos/watchdog">GitHub</a></li>
         <li><a href="#features">Features</a></li>
         <li><a href="#pricing">Pricing</a></li>
+        <li><a href="/privacy">Privacy</a></li>
+        <li><a href="/terms">Terms</a></li>
       </ul>
     </div>
   </footer>

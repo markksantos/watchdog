@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — Watchdog</title>
+  <meta name="description" content="How Watchdog for macOS handles your data. Short version: captures never leave your Mac.">
+  <style>
+    :root { color-scheme: light dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0 auto; padding: 64px 24px 96px; max-width: 720px;
+      font: 400 16px/1.65 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+      color: #16181d; background: #fff;
+    }
+    @media (prefers-color-scheme: dark) { body { color: #e8eaed; background: #0d0f12; } }
+    a { color: #2f6fed; }
+    h1 { font-size: 34px; line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 8px; }
+    h2 { font-size: 20px; letter-spacing: -0.01em; margin: 44px 0 10px; }
+    .meta { color: #6b7280; font-size: 14px; margin: 0 0 40px; }
+    .lede {
+      border-left: 3px solid #2f6fed; padding: 14px 18px; margin: 0 0 8px;
+      background: rgba(47,111,237,0.06); border-radius: 0 8px 8px 0;
+    }
+    ul { padding-left: 22px; }
+    li { margin: 6px 0; }
+    code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.9em; }
+    footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid rgba(128,128,128,0.25); font-size: 14px; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <h1>Privacy Policy</h1>
+  <p class="meta">Watchdog for macOS · Last updated 23 July 2026</p>
+
+  <p class="lede"><strong>The short version:</strong> Watchdog runs entirely on your Mac. It has no
+  account system, no analytics, no crash reporting, and makes no network connections. Your captures
+  are written to a folder on your device and are never sent to us or to anyone else. We cannot see
+  them, and we have no servers that could receive them.</p>
+
+  <h2>Who we are</h2>
+  <p>Watchdog is developed by Mark Studios LLC. If you have a question about this policy, contact us
+  at <a href="mailto:hello@markksantos.com">hello@markksantos.com</a>.</p>
+
+  <h2>What Watchdog records</h2>
+  <p>When you turn monitoring on, Watchdog uses your Mac's camera to look for faces or motion. When it
+  detects something — or on a fixed interval, if you choose Always-On mode — it saves:</p>
+  <ul>
+    <li>a still image (JPEG) from the camera;</li>
+    <li>on Watchdog Pro, an optional 5-second video clip (H.264, no audio — Watchdog never requests
+      microphone access);</li>
+    <li>a small record for each capture: the time, which detection mode fired, the detector's
+      confidence score, and the file name.</li>
+  </ul>
+  <p>These images may include people other than you. Please read "Recording other people" below.</p>
+
+  <h2>Where it is stored</h2>
+  <p>Everything is written to your capture folder — <code>~/Pictures/Watchdog</code> by default, or a
+  folder you pick in Preferences. The files are ordinary images and videos on your own disk, stored
+  unencrypted, readable by you and by anything else running under your macOS user account. Watchdog
+  does not upload, back up, sync, or transmit them anywhere.</p>
+
+  <h2>What we collect</h2>
+  <p><strong>Nothing.</strong> Watchdog collects no personal data, no usage data, and no diagnostics.
+  It contains no analytics or advertising SDKs, does no tracking, and is not distributed with the
+  network entitlement that would let it contact a server even if it wanted to.</p>
+  <p>If you buy Watchdog Pro, the purchase is handled entirely by Apple through the App Store. We
+  receive only the anonymised sales reports Apple provides to every developer. We never see your
+  name, your payment details, or your Apple Account.</p>
+
+  <h2>How long captures are kept</h2>
+  <ul>
+    <li><strong>Free:</strong> captures older than 3 days are permanently deleted, images and clips
+      included. This happens automatically.</li>
+    <li><strong>Pro:</strong> captures are kept until you delete them.</li>
+  </ul>
+  <p>You can delete an individual capture from the gallery at any time, or erase everything at once
+  with <em>Preferences → Privacy → Delete All Captures</em>. Deleting Watchdog does not remove your
+  capture folder — delete it yourself if you want the images gone.</p>
+
+  <h2>Camera permission</h2>
+  <p>macOS asks for your permission before Watchdog can use the camera, and you can withdraw it at any
+  time in <em>System Settings → Privacy &amp; Security → Camera</em>. Whenever the camera is active,
+  macOS shows a green indicator next to the menu bar. Watchdog cannot suppress that indicator and does
+  not try to; the Watchdog menu bar icon also stays visible the entire time it is running.</p>
+
+  <h2>Recording other people</h2>
+  <p>Watchdog photographs whoever is in front of your Mac, including people who may not know the camera
+  is running. Laws on recording other people vary considerably by country, state, and setting —
+  workplaces, shared housing, and rented accommodation are often treated differently from a private
+  home. You are responsible for using Watchdog lawfully where you are, and for informing people who
+  may be recorded. If you are unsure whether a particular use is permitted, get advice before you rely
+  on it.</p>
+
+  <h2>Children</h2>
+  <p>Watchdog is not directed at children and we do not knowingly collect information from anyone.
+  Because nothing leaves your device, there is nothing for us to collect.</p>
+
+  <h2>Your rights</h2>
+  <p>Data protection laws such as the GDPR and the CCPA give you rights to access, correct, export, and
+  delete personal data held about you. Because Watchdog stores everything locally and we hold no data
+  about you, you exercise those rights directly: your captures are files on your own Mac, and you can
+  view, copy, or delete them at any time. There is no account to close and no data for us to return.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>If we change how Watchdog handles data, we will update this page and the date at the top. Material
+  changes will also be described in the app's release notes.</p>
+
+  <footer>
+    <a href="/">← Back to Watchdog</a> · <a href="/terms">Terms of Use</a>
+  </footer>
+</body>
+</html>
