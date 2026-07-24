@@ -3,6 +3,11 @@
 Reviewed: full source tree (`Watchdog/`, 4,660 LOC), `Info.plist`, `Watchdog.entitlements`,
 `Package.swift`, `scripts/build-app.sh`, `Watchdog.storekit`, `landing/index.html`.
 
+> **Status as of 23 July 2026.** The code and configuration fixes are landed (commits
+> `e7169c6`, `e429ba0`). What remains is listed in §7 — the Xcode project restructure, the
+> real domain for the legal pages, and App Store Connect setup. The audit below is kept as
+> written, with each item marked ✅ done or ⬜ outstanding.
+
 Verdict: **cannot be submitted today.** There are 7 hard blockers that will fail either the
 App Store Connect *upload* or the *first review pass*, plus 9 issues that are likely-reject
 or fix-before-ship. Nothing here is unfixable — this is a legitimate, well-behaved category
@@ -372,6 +377,58 @@ truthfully answer "Data Not Collected", which materially simplifies review. Wort
 
 ---
 
+## 7. What is done, and what is left
+
+**Landed** (`e7169c6`, `e429ba0`) — all verified against `swift build` + 26 passing tests:
+
+| Item | What changed |
+|---|---|
+| ✅ B1 | `com.apple.security.app-sandbox` added, plus pictures / user-selected / bookmark entitlements |
+| ✅ B2 | Unused `photos-library` entitlement removed; `network.client` dropped too |
+| ✅ B3 | New `CaptureLocation` resolves the folder via security-scoped bookmark |
+| ✅ B4 | Auto-Lock removed (`AutoLockManager.swift` deleted) |
+| ✅ B5 | `StealthModeManager` → `ScreenDimManager`: no key blocking, visible exit, 15-min timeout, below menu bar |
+| ✅ B6 | Paywall states trial terms + auto-renewal, links Terms of Use and Privacy Policy |
+| ✅ B7 | `landing/privacy.html` + `landing/terms.html` written; linked in-app and in the footer |
+| ✅ R1 | Covert framing and fabricated testimonials removed from the landing page |
+| ✅ R2 | `RecordingNoticeView` gates `startMonitoring()` |
+| ✅ R3 | `PrivacyInfo.xcprivacy` added (CA92.1 + C617.1) and wired into the bundle |
+| ✅ R4 | Global `NSEvent` keyDown monitors removed; local shortcuts retained |
+| ✅ R6 | Webhooks removed entirely → truthful "Data Not Collected" |
+| ✅ R7 | Retention now deletes the media instead of orphaning it |
+| ✅ R8 | Notification attachments cleaned up on termination |
+| ✅ R9, F1–F3 | Info.plist keys, bundle ID, camera string, `os.Logger` |
+
+**Outstanding — these block submission and need you:**
+
+1. ⬜ **R5, the Xcode project.** Still the biggest one. `scripts/build-app.sh` hand-assembles
+   the bundle from `swift build`; App Store Connect will reject it for missing `DTXcode*`
+   keys, and it is unsigned with no provisioning profile. Needs a real Xcode app target with
+   automatic signing and a Mac App Store profile. Everything else is untestable against the
+   actual sandbox until this exists — the sandbox entitlements above are *correct* but have
+   not been exercised, because an unsigned SPM binary isn't sandboxed at runtime.
+2. ⬜ **The domain.** `LegalLinks.host` is a placeholder (`watchdogapp.io`) and the landing
+   site has no domain attached in `landing/vercel.json`. Reviewers click those links; a 404
+   is an automatic rejection. Pick the domain, point it at Vercel, update `LegalLinks`.
+3. ⬜ **Bundle ID.** Set to `com.markstudios.watchdog`, which assumes you own the matching
+   App ID on your team. Register it, or change it to whatever you register.
+4. ⬜ **App Store Connect.** Create the two subscription products in a subscription group,
+   attach the 7-day introductory offer to the annual plan (the paywall advertises it — if it
+   isn't configured there, the badge is false advertising under 2.3.1), and fill in the
+   privacy policy URL, support URL, App Privacy label ("Data Not Collected"), and age rating.
+5. ⬜ **Legal review.** `privacy.html` and `terms.html` are a solid, honest starting point,
+   not legal advice. Have someone qualified read them before you rely on them — the
+   limitation-of-liability and acceptable-use sections especially.
+6. ⬜ **Free-tier data loss on lapse.** When a Pro subscription ends, captures older than
+   3 days are now genuinely deleted. That is the honest reading of the tier, but a lapsed
+   subscriber losing months of footage without warning will generate refund complaints.
+   Consider a warning + export prompt before the first post-lapse prune.
+7. ⬜ **F5, trial reset.** `TrialManager` keys the 7-day trial on a `UserDefaults` date, so
+   deleting the prefs plist grants a fresh trial indefinitely. Not a review issue; your call
+   whether to care.
+
+---
+
 ## 6. Notes for App Review (draft)
 
 Include these in the App Review notes field — camera-monitoring apps get manual scrutiny:
@@ -387,7 +444,7 @@ Include these in the App Review notes field — camera-monitoring apps get manua
 > enable it, after acknowledging a first-run notice about their responsibility to comply
 > with local recording laws.
 >
-> The optional "Webhook Alerts" Pro feature POSTs detection metadata to an HTTPS endpoint
-> **the user supplies** (e.g. their own Slack workspace). It is off by default.
+> Watchdog is not distributed with the network client entitlement, so it cannot make
+> network requests at all. In-app purchases are brokered by StoreKit out of process.
 >
 > Test the Pro paywall with [sandbox account]. Free trial: 7 days on the annual plan.
