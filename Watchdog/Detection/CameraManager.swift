@@ -1,9 +1,11 @@
 import AVFoundation
+import os
 #if canImport(AppKit)
 import AppKit
 #endif
 
 class CameraManager: NSObject {
+    private let log = Logger(subsystem: "com.markstudios.watchdog", category: "camera")
     private var captureSession: AVCaptureSession?
     private var videoOutput: AVCaptureVideoDataOutput?
     private let processingQueue = DispatchQueue(label: "com.watchdog.camera")
@@ -133,27 +135,26 @@ class CameraManager: NSObject {
             return nil
         }
 
-        let saveDir = SettingsManager.shared.saveLocation
-        let fileManager = FileManager.default
-        if !fileManager.fileExists(atPath: saveDir) {
-            try? fileManager.createDirectory(atPath: saveDir, withIntermediateDirectories: true)
-        }
+        // Resolved through CaptureLocation so the write lands inside the sandbox's
+        // security-scoped access to the user's chosen folder.
+        guard CaptureLocation.ensureDirectoryExists() else { return nil }
 
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss-SSS"
-        let filename = "\(formatter.string(from: Date())).jpg"
-        let filePath = (saveDir as NSString).appendingPathComponent(filename)
+        let fileURL = CaptureLocation.currentDirectory
+            .appendingPathComponent("\(formatter.string(from: Date())).jpg")
 
         do {
-            try jpegData.write(to: URL(fileURLWithPath: filePath))
+            try jpegData.write(to: fileURL)
         } catch {
+            log.error("Failed to write capture: \(error.localizedDescription, privacy: .public)")
             return nil
         }
 
         return CaptureRecord(
             detectionType: detectionType,
             confidence: confidence,
-            imagePath: filePath
+            imagePath: fileURL.path
         )
     }
 }

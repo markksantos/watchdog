@@ -24,7 +24,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let subscriptionManager = SubscriptionManager.shared
     let alarmManager = AlarmManager.shared
     let flashAlertController = FlashAlertController.shared
-    let stealthModeManager = StealthModeManager.shared
+    let screenDimManager = ScreenDimManager.shared
     let hotkeyManager = HotkeyManager.shared
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -50,5 +50,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Set up notifications (deferred until app has a bundle proxy)
         NotificationManager.shared.setup()
+
+        // Drop any capture media that has aged out of the free tier's retention window.
+        captureStore.pruneExpiredCaptures()
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        detectionEngine.stopMonitoring()
+        NotificationManager.shared.clearTemporaryAttachments()
+        PowerManager.shared.releaseAll()
+        CaptureLocation.releaseAccess()
     }
 }

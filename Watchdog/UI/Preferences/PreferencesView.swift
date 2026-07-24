@@ -5,19 +5,21 @@ import AVFoundation
 struct PreferencesView: View {
     @EnvironmentObject var settingsManager: SettingsManager
     @EnvironmentObject var subscriptionManager: SubscriptionManager
+    @EnvironmentObject var captureStore: CaptureStore
     @State private var showPaywall = false
-    @State private var webhookTestResult: Bool?
     @State private var alarmTesting = false
     @State private var loginItemError: String?
+    @State private var showRecordingNotice = false
+    @State private var confirmDeleteAll = false
 
     var body: some View {
         Form {
             detectionSection
             captureSection
             schedulingSection
-            webhookSection
             generalSection
             securityResponseSection
+            privacySection
             subscriptionSection
         }
         .formStyle(.grouped)
@@ -34,6 +36,16 @@ struct PreferencesView: View {
             Button("OK") { loginItemError = nil }
         } message: {
             Text(loginItemError ?? "")
+        }
+        .sheet(isPresented: $showRecordingNotice) {
+            RecordingNoticeView(isReview: true)
+                .environmentObject(settingsManager)
+        }
+        .alert("Delete all captures?", isPresented: $confirmDeleteAll) {
+            Button("Delete All", role: .destructive) { captureStore.deleteAllCaptures() }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("This permanently deletes every saved image and video clip from \(settingsManager.saveLocation). This cannot be undone.")
         }
 
         // Footer
@@ -121,7 +133,9 @@ struct PreferencesView: View {
                     panel.prompt = "Select"
                     panel.directoryURL = URL(fileURLWithPath: settingsManager.saveLocation)
                     if panel.runModal() == .OK, let url = panel.url {
-                        settingsManager.saveLocation = url.path
+                        // Routed through SettingsManager so a security-scoped bookmark is
+                        // stored — a bare path grants no access on the next launch.
+                        settingsManager.setSaveLocation(url)
                     }
                 }
                 .controlSize(.small)
@@ -186,38 +200,6 @@ struct PreferencesView: View {
                 }
             } else {
                 proFeatureLock(feature: .detectionScheduling)
-            }
-        }
-    }
-
-    // MARK: - Webhook Section
-
-    private var webhookSection: some View {
-        Section("Webhook Alerts") {
-            if subscriptionManager.hasAccess(to: .webhookAlerts) {
-                Toggle("Enable Webhooks", isOn: $settingsManager.webhookEnabled)
-
-                if settingsManager.webhookEnabled {
-                    TextField("Webhook URL", text: $settingsManager.webhookURL)
-                        .textFieldStyle(.roundedBorder)
-
-                    HStack {
-                        Button("Test Webhook") {
-                            WebhookManager.testWebhook(url: settingsManager.webhookURL) { success in
-                                webhookTestResult = success
-                            }
-                        }
-                        .controlSize(.small)
-                        .disabled(settingsManager.webhookURL.isEmpty)
-
-                        if let result = webhookTestResult {
-                            Image(systemName: result ? "checkmark.circle.fill" : "xmark.circle.fill")
-                                .foregroundColor(result ? .green : .red)
-                        }
-                    }
-                }
-            } else {
-                proFeatureLock(feature: .webhookAlerts)
             }
         }
     }
@@ -309,34 +291,54 @@ struct PreferencesView: View {
                 proFeatureLock(feature: .flashAlert)
             }
 
-            // Stealth Mode
-            if subscriptionManager.hasAccess(to: .stealthMode) {
-                Toggle("Stealth Mode", isOn: $settingsManager.stealthModeEnabled)
+            // Screen Dim
+            if subscriptionManager.hasAccess(to: .screenDim) {
+                Toggle("Dim Screen While Monitoring", isOn: $settingsManager.screenDimEnabled)
 
-                if settingsManager.stealthModeEnabled {
-                    Text("Press ⌘⇧L to reveal screen while monitoring")
+                if settingsManager.screenDimEnabled {
+                    Text("Covers the desktop so it isn't visible to the room. Press ⌘⇧L or click Restore Screen to lift it; it also lifts on its own after 15 minutes. Watchdog stays in the menu bar and all system shortcuts keep working.")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
             } else {
-                proFeatureLock(feature: .stealthMode)
+                proFeatureLock(feature: .screenDim)
+            }
+        }
+    }
+
+    // MARK: - Privacy Section
+
+    /// Guideline 5.1.1 expects the privacy policy to be reachable from inside the app, and
+    /// users need a direct way to erase what Watchdog has recorded of them and others.
+    private var privacySection: some View {
+        Section("Privacy") {
+            HStack {
+                Text("Capture Retention")
+                Spacer()
+                Text(settingsManager.isPaid
+                     ? "Kept until you delete them"
+                     : "Deleted automatically after 3 days")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
 
-            // Auto-Lock
-            if subscriptionManager.hasAccess(to: .autoLock) {
-                Toggle("Auto-Lock on Detection", isOn: $settingsManager.autoLockEnabled)
-
-                if settingsManager.autoLockEnabled {
-                    Picker("Lock Delay", selection: $settingsManager.autoLockDelay) {
-                        Text("Immediately").tag(0)
-                        Text("5 seconds").tag(5)
-                        Text("10 seconds").tag(10)
-                        Text("30 seconds").tag(30)
-                    }
-                }
-            } else {
-                proFeatureLock(feature: .autoLock)
+            Button("Review What Watchdog Records...") {
+                showRecordingNotice = true
             }
+
+            Button("Delete All Captures...", role: .destructive) {
+                confirmDeleteAll = true
+            }
+            .disabled(captureStore.captures.isEmpty)
+
+            HStack(spacing: 6) {
+                Link("Privacy Policy", destination: URL(string: LegalLinks.privacyPolicy)!)
+                Text("·").foregroundColor(.secondary)
+                Link("Terms of Use", destination: URL(string: LegalLinks.termsOfUse)!)
+                Text("·").foregroundColor(.secondary)
+                Link("Support", destination: URL(string: LegalLinks.support)!)
+            }
+            .font(.caption)
         }
     }
 

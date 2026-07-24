@@ -128,6 +128,7 @@ class StatusBarController {
         let preferencesView = PreferencesView()
             .environmentObject(settingsManager)
             .environmentObject(subscriptionManager)
+            .environmentObject(captureStore)
 
         let hostingController = NSHostingController(rootView: preferencesView)
 

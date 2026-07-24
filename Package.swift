@@ -18,7 +18,8 @@ let package = Package(
                 "Watchdog.entitlements"
             ],
             resources: [
-                .copy("Resources/AppIcon.icns")
+                .copy("Resources/AppIcon.icns"),
+                .copy("Resources/PrivacyInfo.xcprivacy")
             ],
             linkerSettings: [
                 .linkedFramework("AppKit"),

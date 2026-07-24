@@ -2,11 +2,33 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <!-- Required for Mac App Store distribution. -->
+    <key>com.apple.security.app-sandbox</key>
+    <true/>
+
+    <!-- Core function: detect and capture from the camera. -->
     <key>com.apple.security.device.camera</key>
     <true/>
-    <key>com.apple.security.personal-information.photos-library</key>
+
+    <!-- Default capture folder lives in ~/Pictures/Watchdog. -->
+    <key>com.apple.security.assets.pictures.read-write</key>
     <true/>
-    <key>com.apple.security.network.client</key>
+
+    <!-- User picks a custom capture folder (Preferences) and a PDF export path. -->
+    <key>com.apple.security.files.user-selected.read-write</key>
     <true/>
+
+    <!-- Persist access to the user's chosen capture folder across launches. -->
+    <key>com.apple.security.files.bookmarks.app-scope</key>
+    <true/>
+
+    <!--
+      Deliberately NOT requested:
+        com.apple.security.network.client
+            Watchdog makes no network connections. StoreKit purchases are brokered
+            out-of-process by the system and do not require this entitlement.
+        com.apple.security.personal-information.photos-library
+            Watchdog never reads or writes the Photos library.
+    -->
 </dict>
 </plist>

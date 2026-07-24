@@ -18,7 +18,7 @@ class VideoRecorder {
     private var completion: ((String?) -> Void)?
     private var outputPath: String?
 
-    func startRecording(dimensions: CMVideoDimensions, saveDirectory: String, completion: @escaping (String?) -> Void) {
+    func startRecording(dimensions: CMVideoDimensions, completion: @escaping (String?) -> Void) {
         recordingQueue.async { [weak self] in
             guard let self, !self._isRecording else {
                 completion(nil)
@@ -27,16 +27,18 @@ class VideoRecorder {
 
             self.completion = completion
 
+            // Resolved through CaptureLocation so the write lands inside the sandbox's
+            // security-scoped access to the user's chosen folder.
+            guard CaptureLocation.ensureDirectoryExists() else {
+                completion(nil)
+                return
+            }
+
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
-            let filename = "\(formatter.string(from: Date())).mov"
-            let filePath = (saveDirectory as NSString).appendingPathComponent(filename)
-            self.outputPath = filePath
-
-            let url = URL(fileURLWithPath: filePath)
-
-            // Create directory if needed
-            try? FileManager.default.createDirectory(atPath: saveDirectory, withIntermediateDirectories: true)
+            let url = CaptureLocation.currentDirectory
+                .appendingPathComponent("\(formatter.string(from: Date())).mov")
+            self.outputPath = url.path
 
             // Remove existing file
             try? FileManager.default.removeItem(at: url)

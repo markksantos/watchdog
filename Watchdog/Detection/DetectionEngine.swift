@@ -20,9 +20,12 @@ class DetectionEngine: NSObject, ObservableObject {
     private let securityActionCooldown: TimeInterval = 30
     private var lastAlarmFired: Date?
     private var lastFlashFired: Date?
-    private var lastAutoLockFired: Date?
 
     var onCapture: ((CaptureRecord) -> Void)?
+
+    /// Set when `startMonitoring()` is refused because the user has not yet acknowledged
+    /// the first-run recording notice. The UI presents the notice in response.
+    @Published var needsRecordingConsent: Bool = false
 
     private override init() {
         super.init()
@@ -46,6 +49,13 @@ class DetectionEngine: NSObject, ObservableObject {
     }
 
     func startMonitoring() {
+        // The user must acknowledge what Watchdog records, and their responsibility for
+        // recording other people, before the camera is ever opened.
+        guard SettingsManager.shared.hasAcceptedRecordingNotice else {
+            DispatchQueue.main.async { [weak self] in self?.needsRecordingConsent = true }
+            return
+        }
+
         cameraManager.requestPermission { [weak self] granted in
             guard let self else { return }
             guard granted else {
@@ -75,7 +85,6 @@ class DetectionEngine: NSObject, ObservableObject {
         cameraManager.stopSession()
         lastAlarmFired = nil
         lastFlashFired = nil
-        lastAutoLockFired = nil
 
         DispatchQueue.main.async { [weak self] in
             self?.isMonitoring = false
@@ -131,11 +140,10 @@ class DetectionEngine: NSObject, ObservableObject {
         let isRecording = videoRecorder.isRecording
         if videoEnabled, !isRecording {
             let dimensions = cameraManager.videoDimensions
-            let saveDir = SettingsManager.shared.saveLocation
 
             DispatchQueue.main.async { [weak self] in
                 guard SubscriptionManager.shared.hasAccess(to: .videoRecording) else { return }
-                self?.videoRecorder.startRecording(dimensions: dimensions, saveDirectory: saveDir) { [weak self] videoPath in
+                self?.videoRecorder.startRecording(dimensions: dimensions) { [weak self] videoPath in
                     if let videoPath {
                         self?.updateLastCaptureWithVideo(videoPath: videoPath)
                     }
@@ -165,16 +173,6 @@ class DetectionEngine: NSObject, ObservableObject {
             FlashAlertController.shared.showAlert()
         }
 
-        // Trigger auto-lock if pro, enabled, and not in cooldown
-        DispatchQueue.main.async { [weak self] in
-            guard let self,
-                  SubscriptionManager.shared.hasAccess(to: .autoLock),
-                  SettingsManager.shared.autoLockEnabled,
-                  self.lastAutoLockFired.map({ Date().timeIntervalSince($0) >= self.securityActionCooldown }) ?? true
-            else { return }
-            self.lastAutoLockFired = Date()
-            AutoLockManager.scheduleLock(afterDelay: Double(SettingsManager.shared.autoLockDelay))
-        }
     }
 
     private func updateLastCaptureWithVideo(videoPath: String) {

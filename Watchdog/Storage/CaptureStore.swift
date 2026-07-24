@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import os
 
 class CaptureStore: ObservableObject {
     static let shared = CaptureStore()
@@ -8,9 +9,10 @@ class CaptureStore: ObservableObject {
     @Published var captures: [CaptureRecord] = []
     @Published var lastCapture: CaptureRecord?
 
+    private let log = Logger(subsystem: "com.markstudios.watchdog", category: "storage")
+
     private var metadataURL: URL {
-        URL(fileURLWithPath: SettingsManager.shared.saveLocation)
-            .appendingPathComponent("captures.json")
+        CaptureLocation.currentDirectory.appendingPathComponent("captures.json")
     }
 
     private init() {
@@ -24,7 +26,6 @@ class CaptureStore: ObservableObject {
         lastCapture = record
         saveCaptureMetadata()
         NotificationManager.shared.sendCaptureNotification(record: record)
-        WebhookManager.sendWebhook(for: record)
     }
 
     func updateCapture(_ id: UUID, videoPath: String) {
@@ -36,23 +37,52 @@ class CaptureStore: ObservableObject {
 
     func deleteCapture(_ record: CaptureRecord) {
         captures.removeAll { $0.id == record.id }
-        if let videoPath = record.videoPath {
-            try? FileManager.default.removeItem(atPath: videoPath)
+        removeMedia(for: record)
+        if lastCapture?.id == record.id {
+            lastCapture = captures.first
         }
-        try? FileManager.default.removeItem(atPath: record.imagePath)
         saveCaptureMetadata()
     }
 
     func deleteAllCaptures() {
         for capture in captures {
-            if let videoPath = capture.videoPath {
-                try? FileManager.default.removeItem(atPath: videoPath)
-            }
-            try? FileManager.default.removeItem(atPath: capture.imagePath)
+            removeMedia(for: capture)
         }
         captures.removeAll()
         lastCapture = nil
         saveCaptureMetadata()
+    }
+
+    /// Enforces the retention window by **deleting the media**, not merely hiding it.
+    ///
+    /// The previous implementation filtered aged-out records out of the in-memory list and
+    /// then persisted the shortened list, which orphaned the underlying `.jpg`/`.mov` files:
+    /// photographs of people accumulated on disk forever with no way for the user to find or
+    /// remove them. Retention has to actually delete, both to keep the promise the UI makes
+    /// and to avoid hoarding images of third parties indefinitely.
+    func pruneExpiredCaptures() {
+        guard let dayLimit = SettingsManager.shared.historyDayLimit,
+              let cutoff = Calendar.current.date(byAdding: .day, value: -dayLimit, to: Date())
+        else { return }
+
+        let expired = captures.filter { $0.timestamp <= cutoff }
+        guard !expired.isEmpty else { return }
+
+        for record in expired {
+            removeMedia(for: record)
+        }
+        captures.removeAll { $0.timestamp <= cutoff }
+        lastCapture = captures.first
+        saveCaptureMetadata()
+
+        log.info("Pruned \(expired.count, privacy: .public) capture(s) past the \(dayLimit, privacy: .public)-day retention window")
+    }
+
+    private func removeMedia(for record: CaptureRecord) {
+        if let videoPath = record.videoPath {
+            try? FileManager.default.removeItem(atPath: videoPath)
+        }
+        try? FileManager.default.removeItem(atPath: record.imagePath)
     }
 
     func loadCaptures() {
@@ -61,12 +91,6 @@ class CaptureStore: ObservableObject {
         do {
             let data = try Data(contentsOf: metadataURL)
             var decoded = try JSONDecoder().decode([CaptureRecord].self, from: data)
-
-            // Enforce free tier 3-day limit
-            if !SettingsManager.shared.isPaid {
-                let threeDaysAgo = Calendar.current.date(byAdding: .day, value: -3, to: Date()) ?? Date()
-                decoded = decoded.filter { $0.timestamp > threeDaysAgo }
-            }
 
             // Remove records whose image files no longer exist
             decoded = decoded.filter { FileManager.default.fileExists(atPath: $0.imagePath) }
@@ -85,7 +109,7 @@ class CaptureStore: ObservableObject {
             captures = decoded
             lastCapture = decoded.first
         } catch {
-            print("[Watchdog] Failed to load captures: \(error)")
+            log.error("Failed to load captures: \(error.localizedDescription, privacy: .public)")
         }
     }
 
@@ -96,7 +120,7 @@ class CaptureStore: ObservableObject {
             let data = try JSONEncoder().encode(captures)
             try data.write(to: metadataURL, options: .atomic)
         } catch {
-            print("[Watchdog] Failed to save capture metadata: \(error)")
+            log.error("Failed to save capture metadata: \(error.localizedDescription, privacy: .public)")
         }
     }
 

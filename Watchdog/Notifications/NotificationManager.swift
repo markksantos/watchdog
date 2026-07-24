@@ -1,17 +1,25 @@
 import Foundation
 import UserNotifications
+import os
 
 class NotificationManager {
     static let shared = NotificationManager()
 
+    private let log = Logger(subsystem: "com.markstudios.watchdog", category: "notifications")
     private var isSetUp = false
+
+    /// Notification attachments have to live in a file the system can read, so each capture
+    /// is copied into a temp directory. Track them so they can be removed — otherwise every
+    /// detection leaves a photograph of a person in `/tmp` indefinitely.
+    private let attachmentDirectory = FileManager.default.temporaryDirectory
+        .appendingPathComponent("CaptureAttachments", isDirectory: true)
 
     private init() {}
 
     func setup() {
         guard !isSetUp else { return }
         guard Bundle.main.bundleIdentifier != nil else {
-            print("[Watchdog] No bundle identifier — notifications unavailable")
+            log.error("No bundle identifier — notifications unavailable")
             return
         }
         isSetUp = true
@@ -21,11 +29,11 @@ class NotificationManager {
 
     func requestPermission() {
         guard Bundle.main.bundleIdentifier != nil else { return }
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if let error = error {
-                print("[Watchdog] Notification permission error: \(error)")
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, error in
+            if let error {
+                self?.log.error("Notification permission error: \(error.localizedDescription, privacy: .public)")
             }
-            print("[Watchdog] Notifications \(granted ? "granted" : "denied")")
+            self?.log.info("Notification permission \(granted ? "granted" : "denied", privacy: .public)")
         }
     }
 
@@ -48,9 +56,9 @@ class NotificationManager {
             trigger: nil
         )
 
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("[Watchdog] Failed to send notification: \(error)")
+        UNUserNotificationCenter.current().add(request) { [weak self] error in
+            if let error {
+                self?.log.error("Failed to send notification: \(error.localizedDescription, privacy: .public)")
             }
         }
     }
@@ -76,10 +84,9 @@ class NotificationManager {
         let fileManager = FileManager.default
         guard fileManager.fileExists(atPath: imageURL.path) else { return nil }
 
-        let tempDir = fileManager.temporaryDirectory
-        let tempFile = tempDir.appendingPathComponent(UUID().uuidString + ".jpg")
-
         do {
+            try fileManager.createDirectory(at: attachmentDirectory, withIntermediateDirectories: true)
+            let tempFile = attachmentDirectory.appendingPathComponent(UUID().uuidString + ".jpg")
             try fileManager.copyItem(at: imageURL, to: tempFile)
             return try UNNotificationAttachment(
                 identifier: UUID().uuidString,
@@ -87,8 +94,14 @@ class NotificationManager {
                 options: nil
             )
         } catch {
-            print("[Watchdog] Failed to create notification attachment: \(error)")
+            log.error("Failed to create notification attachment: \(error.localizedDescription, privacy: .public)")
             return nil
         }
+    }
+
+    /// Deletes the copies of captures made for notification attachments.
+    /// Called on termination so images of people don't linger in the temp directory.
+    func clearTemporaryAttachments() {
+        try? FileManager.default.removeItem(at: attachmentDirectory)
     }
 }

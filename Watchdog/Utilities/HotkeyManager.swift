@@ -2,10 +2,18 @@ import Foundation
 import AppKit
 import Carbon.HIToolbox
 
+/// In-app keyboard shortcuts.
+///
+/// These are deliberately **local only**. System-wide key monitoring
+/// (`NSEvent.addGlobalMonitorForEvents(matching: .keyDown)`) requires Accessibility /
+/// Input Monitoring trust, which a sandboxed Mac App Store app cannot obtain — the
+/// handlers would never fire — and a process-wide keystroke listener is not something a
+/// camera app should be installing regardless. Use the menu bar item for the same actions
+/// when Watchdog is in the background.
 class HotkeyManager {
     static let shared = HotkeyManager()
 
-    private var monitors: [Any] = []
+    private var monitor: Any?
     private weak var detectionEngine: DetectionEngine?
 
     private init() {}
@@ -16,38 +24,22 @@ class HotkeyManager {
     }
 
     private func registerHotkeys() {
-        guard monitors.isEmpty else { return }
+        guard monitor == nil else { return }
 
-        // ⌘⇧M — Toggle monitoring
-        let monitorToggle = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            guard event.modifierFlags.contains([.command, .shift]),
-                  event.keyCode == UInt16(kVK_ANSI_M) else { return }
-            self?.toggleMonitoring()
-        }
-        if let monitorToggle { monitors.append(monitorToggle) }
+        monitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard event.modifierFlags.contains([.command, .shift]) else { return event }
 
-        // ⌘⇧C — Manual capture
-        let captureHotkey = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            guard event.modifierFlags.contains([.command, .shift]),
-                  event.keyCode == UInt16(kVK_ANSI_C) else { return }
-            self?.manualCapture()
-        }
-        if let captureHotkey { monitors.append(captureHotkey) }
-
-        // Also monitor local events (when app is in foreground)
-        let localMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            if event.modifierFlags.contains([.command, .shift]) {
-                if event.keyCode == UInt16(kVK_ANSI_M) {
-                    self?.toggleMonitoring()
-                    return nil
-                } else if event.keyCode == UInt16(kVK_ANSI_C) {
-                    self?.manualCapture()
-                    return nil
-                }
+            switch Int(event.keyCode) {
+            case kVK_ANSI_M:            // ⌘⇧M — toggle monitoring
+                self?.toggleMonitoring()
+                return nil
+            case kVK_ANSI_C:            // ⌘⇧C — manual capture
+                self?.manualCapture()
+                return nil
+            default:
+                return event
             }
-            return event
         }
-        if let localMonitor { monitors.append(localMonitor) }
     }
 
     private func toggleMonitoring() {
@@ -68,7 +60,7 @@ class HotkeyManager {
     }
 
     deinit {
-        for monitor in monitors {
+        if let monitor {
             NSEvent.removeMonitor(monitor)
         }
     }

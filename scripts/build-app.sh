@@ -25,6 +25,9 @@ cp "$PROJECT_DIR/Watchdog/Info.plist" "$APP_BUNDLE/Contents/Info.plist"
 # Copy icon
 cp "$PROJECT_DIR/Watchdog/Resources/AppIcon.icns" "$APP_BUNDLE/Contents/Resources/AppIcon.icns"
 
+# Copy privacy manifest — App Store submissions require it at the top level of Resources
+cp "$PROJECT_DIR/Watchdog/Resources/PrivacyInfo.xcprivacy" "$APP_BUNDLE/Contents/Resources/PrivacyInfo.xcprivacy"
+
 # Copy SPM resource bundle if it exists (for programmatic icon loading)
 RESOURCE_BUNDLE="$BUILD_DIR/Watchdog_Watchdog.bundle"
 if [ -d "$RESOURCE_BUNDLE" ]; then

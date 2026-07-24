@@ -6,8 +6,10 @@
     <string>Watchdog</string>
     <key>CFBundleDisplayName</key>
     <string>Watchdog</string>
+    <key>CFBundleExecutable</key>
+    <string>Watchdog</string>
     <key>CFBundleIdentifier</key>
-    <string>com.watchdog.security-camera</string>
+    <string>com.markstudios.watchdog</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>CFBundleShortVersionString</key>
@@ -18,11 +20,21 @@
     <string>13.0</string>
     <key>LSUIElement</key>
     <true/>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.utilities</string>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>Copyright © 2026 Mark Studios LLC. All rights reserved.</string>
+
+    <!--
+      Watchdog makes no network connections, so it uses no encryption beyond what the
+      OS provides. Declaring this skips the export-compliance questionnaire on upload.
+    -->
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
+
     <key>NSCameraUsageDescription</key>
-    <string>Watchdog needs camera access to detect and capture photos of anyone approaching your screen.</string>
-    <key>NSUserNotificationAlertStyle</key>
-    <string>alert</string>
+    <string>Watchdog uses your camera to detect motion or faces in front of this Mac and saves the captures locally to your device. Captures are never sent to the developer or to any server.</string>
 </dict>
 </plist>

@@ -35,8 +35,11 @@ final class SubscriptionModelTests: XCTestCase {
         }
     }
 
-    func testProFeatureCountMatchesTenTiers() {
-        // The product markets ten Pro capabilities; keep this in sync with the paywall.
-        XCTAssertEqual(ProFeature.allCases.count, 10)
+    func testProFeatureCountMatchesMarketedTiers() {
+        // Eight Pro capabilities. Webhook Alerts and Auto-Lock were removed for the Mac
+        // App Store build (see tasks/app-store-compliance.md): the sandbox blocks both, so
+        // shipping them would mean selling features that cannot work. Keep this in sync
+        // with the paywall and the landing page.
+        XCTAssertEqual(ProFeature.allCases.count, 8)
     }
 }

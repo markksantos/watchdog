@@ -19,9 +19,10 @@ class SettingsManager: ObservableObject {
     @Published var motionSensitivity: Double {
         didSet { UserDefaults.standard.set(motionSensitivity, forKey: Keys.motionSensitivity) }
     }
-    @Published var saveLocation: String {
-        didSet { UserDefaults.standard.set(saveLocation, forKey: Keys.saveLocation) }
-    }
+    /// Resolved capture directory. Not persisted directly — the source of truth is the
+    /// security-scoped bookmark held by `CaptureLocation`, since a bare path grants no
+    /// access under the App Sandbox. Set via `setSaveLocation(_:)`.
+    @Published private(set) var saveLocation: String
     @Published var notificationsEnabled: Bool {
         didSet { UserDefaults.standard.set(notificationsEnabled, forKey: Keys.notificationsEnabled) }
     }
@@ -40,12 +41,6 @@ class SettingsManager: ObservableObject {
                 UserDefaults.standard.set(data, forKey: Keys.scheduleConfig)
             }
         }
-    }
-    @Published var webhookURL: String {
-        didSet { UserDefaults.standard.set(webhookURL, forKey: Keys.webhookURL) }
-    }
-    @Published var webhookEnabled: Bool {
-        didSet { UserDefaults.standard.set(webhookEnabled, forKey: Keys.webhookEnabled) }
     }
     @Published var videoRecordingEnabled: Bool {
         didSet { UserDefaults.standard.set(videoRecordingEnabled, forKey: Keys.videoRecordingEnabled) }
@@ -68,17 +63,17 @@ class SettingsManager: ObservableObject {
     @Published var flashAlertEnabled: Bool {
         didSet { UserDefaults.standard.set(flashAlertEnabled, forKey: Keys.flashAlertEnabled) }
     }
-    @Published var stealthModeEnabled: Bool {
-        didSet { UserDefaults.standard.set(stealthModeEnabled, forKey: Keys.stealthModeEnabled) }
-    }
-    @Published var autoLockEnabled: Bool {
-        didSet { UserDefaults.standard.set(autoLockEnabled, forKey: Keys.autoLockEnabled) }
-    }
-    @Published var autoLockDelay: Int {
-        didSet { UserDefaults.standard.set(autoLockDelay, forKey: Keys.autoLockDelay) }
+    @Published var screenDimEnabled: Bool {
+        didSet { UserDefaults.standard.set(screenDimEnabled, forKey: Keys.screenDimEnabled) }
     }
     @Published var selectedCameraID: String {
         didSet { UserDefaults.standard.set(selectedCameraID, forKey: Keys.selectedCameraID) }
+    }
+
+    /// Set once the user has acknowledged the first-run recording notice.
+    /// Monitoring cannot start until this is true.
+    @Published var hasAcceptedRecordingNotice: Bool {
+        didSet { UserDefaults.standard.set(hasAcceptedRecordingNotice, forKey: Keys.hasAcceptedRecordingNotice) }
     }
 
     /// Computed property delegating to SubscriptionManager
@@ -90,13 +85,10 @@ class SettingsManager: ObservableObject {
         static let detectionMode = "detectionMode"
         static let captureInterval = "captureInterval"
         static let motionSensitivity = "motionSensitivity"
-        static let saveLocation = "saveLocation"
         static let notificationsEnabled = "notificationsEnabled"
         static let launchAtLogin = "launchAtLogin"
         static let photoQuality = "photoQuality"
         static let scheduleConfig = "scheduleConfig"
-        static let webhookURL = "webhookURL"
-        static let webhookEnabled = "webhookEnabled"
         static let videoRecordingEnabled = "videoRecordingEnabled"
         static let preventSleep = "preventSleep"
         static let preventScreenLock = "preventScreenLock"
@@ -104,20 +96,19 @@ class SettingsManager: ObservableObject {
         static let alarmSound = "alarmSound"
         static let alarmVolume = "alarmVolume"
         static let flashAlertEnabled = "flashAlertEnabled"
-        static let stealthModeEnabled = "stealthModeEnabled"
-        static let autoLockEnabled = "autoLockEnabled"
-        static let autoLockDelay = "autoLockDelay"
+        static let screenDimEnabled = "screenDimEnabled"
         static let selectedCameraID = "selectedCameraID"
+        static let hasAcceptedRecordingNotice = "hasAcceptedRecordingNotice"
+        // The capture folder is persisted as a security-scoped bookmark by CaptureLocation.
     }
 
     private init() {
         let defaults = UserDefaults.standard
-        let homeDir = FileManager.default.homeDirectoryForCurrentUser.path
 
         self.detectionMode = DetectionMode(rawValue: defaults.string(forKey: Keys.detectionMode) ?? "") ?? .faceDetection
         self.captureInterval = CaptureInterval(rawValue: defaults.integer(forKey: Keys.captureInterval)) ?? .fiveSeconds
         self.motionSensitivity = defaults.object(forKey: Keys.motionSensitivity) as? Double ?? 0.05
-        self.saveLocation = defaults.string(forKey: Keys.saveLocation) ?? "\(homeDir)/Pictures/Watchdog"
+        self.saveLocation = CaptureLocation.resolveAtLaunch().path
         self.notificationsEnabled = defaults.object(forKey: Keys.notificationsEnabled) as? Bool ?? true
         self.launchAtLogin = defaults.bool(forKey: Keys.launchAtLogin)
         self.photoQuality = PhotoQuality(rawValue: defaults.string(forKey: Keys.photoQuality) ?? "") ?? .high
@@ -129,8 +120,6 @@ class SettingsManager: ObservableObject {
         } else {
             self.scheduleConfig = ScheduleConfig()
         }
-        self.webhookURL = defaults.string(forKey: Keys.webhookURL) ?? ""
-        self.webhookEnabled = defaults.bool(forKey: Keys.webhookEnabled)
         self.videoRecordingEnabled = defaults.bool(forKey: Keys.videoRecordingEnabled)
         self.preventSleep = defaults.bool(forKey: Keys.preventSleep)
         self.preventScreenLock = defaults.bool(forKey: Keys.preventScreenLock)
@@ -138,10 +127,20 @@ class SettingsManager: ObservableObject {
         self.alarmSound = AlarmSound(rawValue: defaults.string(forKey: Keys.alarmSound) ?? "") ?? .siren
         self.alarmVolume = defaults.object(forKey: Keys.alarmVolume) as? Double ?? 0.8
         self.flashAlertEnabled = defaults.bool(forKey: Keys.flashAlertEnabled)
-        self.stealthModeEnabled = defaults.bool(forKey: Keys.stealthModeEnabled)
-        self.autoLockEnabled = defaults.bool(forKey: Keys.autoLockEnabled)
-        self.autoLockDelay = defaults.object(forKey: Keys.autoLockDelay) as? Int ?? 10
+        self.screenDimEnabled = defaults.bool(forKey: Keys.screenDimEnabled)
         self.selectedCameraID = defaults.string(forKey: Keys.selectedCameraID) ?? ""
+        self.hasAcceptedRecordingNotice = defaults.bool(forKey: Keys.hasAcceptedRecordingNotice)
+    }
+
+    /// Adopts a folder the user chose in Preferences, persisting sandbox access to it.
+    func setSaveLocation(_ url: URL) {
+        saveLocation = CaptureLocation.setCustomDirectory(url).path
+    }
+
+    /// Reverts the capture folder to `~/Pictures/Watchdog`.
+    func resetSaveLocationToDefault() {
+        CaptureLocation.resetToDefault()
+        saveLocation = CaptureLocation.defaultDirectory.path
     }
 
     var historyDayLimit: Int? {

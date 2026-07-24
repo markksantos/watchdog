@@ -7,6 +7,7 @@ struct PopoverView: View {
     @EnvironmentObject var subscriptionManager: SubscriptionManager
 
     @State private var showCameraPermissionAlert = false
+    @State private var showRecordingNotice = false
 
     var openMainWindow: () -> Void
     var openPreferences: () -> Void
@@ -94,6 +95,20 @@ struct PopoverView: View {
         }
         .onReceive(detectionEngine.$cameraPermissionDenied) { denied in
             if denied { showCameraPermissionAlert = true }
+        }
+        // Monitoring is refused until the user has acknowledged what Watchdog records.
+        .onReceive(detectionEngine.$needsRecordingConsent) { needed in
+            if needed { showRecordingNotice = true }
+        }
+        .sheet(isPresented: $showRecordingNotice, onDismiss: {
+            detectionEngine.needsRecordingConsent = false
+            // Proceed straight into monitoring if they accepted.
+            if settingsManager.hasAcceptedRecordingNotice {
+                detectionEngine.startMonitoring()
+            }
+        }) {
+            RecordingNoticeView()
+                .environmentObject(settingsManager)
         }
     }
 

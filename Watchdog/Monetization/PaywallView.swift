@@ -16,7 +16,9 @@ struct PaywallView: View {
                     featuresSection
                     planCards
                     purchaseButton
+                    subscriptionTerms
                     restoreLink
+                    legalLinks
                 }
                 .padding(32)
             }
@@ -214,6 +216,54 @@ struct PaywallView: View {
         }
         .buttonStyle(.plain)
         .disabled(subscriptionManager.isLoading)
+    }
+
+    // MARK: - Required Disclosures
+
+    /// App Review guideline 3.1.2 requires the purchase screen to state the subscription
+    /// length, the price per period, the free-trial terms, and that it auto-renews —
+    /// alongside functional Terms of Use and Privacy Policy links (below). Do not remove.
+    private var subscriptionTerms: some View {
+        VStack(spacing: 6) {
+            Text(termsText)
+                .font(.system(size: 10))
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, 4)
+    }
+
+    private var termsText: String {
+        let annualPrice = subscriptionManager.annualProduct?.displayPrice ?? "$29.99"
+        let monthlyPrice = subscriptionManager.monthlyProduct?.displayPrice ?? "$3.99"
+
+        if selectedPlan == "com.watchdog.pro.annual" {
+            return """
+            7-day free trial, then \(annualPrice) per year. Payment is charged to your Apple \
+            Account at confirmation of purchase. The subscription renews automatically unless \
+            cancelled at least 24 hours before the end of the current period, and your account \
+            is charged for renewal within 24 hours of the period ending. Manage or cancel \
+            anytime in System Settings → Apple Account → Media & Purchases → Subscriptions.
+            """
+        }
+
+        return """
+        \(monthlyPrice) per month. Payment is charged to your Apple Account at confirmation of \
+        purchase. The subscription renews automatically unless cancelled at least 24 hours \
+        before the end of the current period, and your account is charged for renewal within \
+        24 hours of the period ending. Manage or cancel anytime in System Settings → \
+        Apple Account → Media & Purchases → Subscriptions.
+        """
+    }
+
+    private var legalLinks: some View {
+        HStack(spacing: 6) {
+            Link("Terms of Use", destination: URL(string: LegalLinks.termsOfUse)!)
+            Text("·").foregroundColor(.secondary)
+            Link("Privacy Policy", destination: URL(string: LegalLinks.privacyPolicy)!)
+        }
+        .font(.system(size: 11))
     }
 
     // MARK: - Restore
