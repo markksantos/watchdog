@@ -102,7 +102,7 @@
               "locale" : "en_US"
             }
           ],
-          "productID" : "com.watchdog.pro.monthly",
+          "productID" : "com.markstudios.watchdog.pro.monthly",
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "Watchdog Pro Monthly",
           "subscriptionGroupID" : "9E620BE6-D530-4D34-BC94-E37D7EC5C3DC",
@@ -131,7 +131,7 @@
               "locale" : "en_US"
             }
           ],
-          "productID" : "com.watchdog.pro.annual",
+          "productID" : "com.markstudios.watchdog.pro.annual",
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "Watchdog Pro Annual",
           "subscriptionGroupID" : "9E620BE6-D530-4D34-BC94-E37D7EC5C3DC",
