@@ -1,8 +1,11 @@
 import Foundation
 import AppKit
+import os
 
 class WakeDetector {
     static let shared = WakeDetector()
+
+    private static let log = Logger(subsystem: "com.markstudios.watchdog", category: "wake")
 
     private var detectionEngine: DetectionEngine?
     private var isBurstCapturing = false
@@ -32,7 +35,7 @@ class WakeDetector {
               detectionEngine?.isMonitoring == true else { return }
 
         isBurstCapturing = true
-        print("[Watchdog] Wake detected - starting burst capture")
+        Self.log.info("Wake detected — starting burst capture")
 
         detectionEngine?.burstCapture(duration: 10)
 

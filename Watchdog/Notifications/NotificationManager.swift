@@ -100,7 +100,11 @@ class NotificationManager {
     }
 
     /// Deletes the copies of captures made for notification attachments.
-    /// Called on termination so images of people don't linger in the temp directory.
+    ///
+    /// Called both on graceful termination *and* at launch. Termination alone isn't enough:
+    /// a force-quit, crash, or logout skips `applicationWillTerminate` entirely, and every
+    /// one of these files is a photograph of a person. Clearing at startup guarantees they
+    /// survive at most one session however the previous one ended.
     func clearTemporaryAttachments() {
         try? FileManager.default.removeItem(at: attachmentDirectory)
     }

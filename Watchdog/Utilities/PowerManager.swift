@@ -1,11 +1,14 @@
 import Foundation
 import IOKit.pwr_mgt
 import Combine
+import os
 
 /// Manages IOKit power assertions to prevent system sleep and screen lock
 /// based on user preferences in SettingsManager.
 class PowerManager {
     static let shared = PowerManager()
+
+    private static let log = Logger(subsystem: "com.markstudios.watchdog", category: "power")
 
     private var sleepAssertionID: IOPMAssertionID = 0
     private var displayAssertionID: IOPMAssertionID = 0
@@ -35,7 +38,7 @@ class PowerManager {
                 &sleepAssertionID
             )
             if result != kIOReturnSuccess {
-                print("[PowerManager] Failed to create sleep assertion: \(result)")
+                Self.log.error("Failed to create sleep assertion: \(result, privacy: .public)")
                 sleepAssertionID = 0
             }
         } else {
@@ -61,7 +64,7 @@ class PowerManager {
                 &displayAssertionID
             )
             if result != kIOReturnSuccess {
-                print("[PowerManager] Failed to create display assertion: \(result)")
+                Self.log.error("Failed to create display assertion: \(result, privacy: .public)")
                 displayAssertionID = 0
             }
         } else {

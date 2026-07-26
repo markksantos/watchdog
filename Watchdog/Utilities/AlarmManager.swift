@@ -5,6 +5,8 @@ import os
 class AlarmManager {
     static let shared = AlarmManager()
 
+    private static let log = Logger(subsystem: "com.markstudios.watchdog", category: "alarm")
+
     private let engine = AVAudioEngine()
     private var sourceNode: AVAudioSourceNode?
     private var autoStopTimer: Timer?
@@ -65,7 +67,7 @@ class AlarmManager {
         if sampleRate == 0 { sampleRate = 44100.0 }
 
         guard let format = AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: 1) else {
-            print("[AlarmManager] Failed to create audio format")
+            Self.log.error("Failed to create audio format")
             return
         }
 
@@ -123,7 +125,7 @@ class AlarmManager {
         do {
             try engine.start()
         } catch {
-            print("[AlarmManager] Failed to start engine: \(error)")
+            Self.log.error("Failed to start audio engine: \(error.localizedDescription, privacy: .public)")
         }
     }
 

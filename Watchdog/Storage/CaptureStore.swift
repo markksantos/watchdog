@@ -15,8 +15,22 @@ class CaptureStore: ObservableObject {
         CaptureLocation.currentDirectory.appendingPathComponent("captures.json")
     }
 
+    /// Retention is re-checked on this cadence for sessions that sit idle.
+    ///
+    /// Watchdog is an `LSUIElement` menu-bar app that people leave running for weeks, so a
+    /// prune that only ran at launch (the previous behaviour) let images of third parties
+    /// sit on disk long past the 3 days the free tier promises — in Preferences, in the
+    /// first-run notice, and in the privacy policy. Pruning is cheap: it filters an
+    /// in-memory array and only touches the disk when something actually expired.
+    private let pruneInterval: TimeInterval = 60 * 60
+    private var pruneTimer: Timer?
+
     private init() {
         loadCaptures()
+
+        pruneTimer = Timer.scheduledTimer(withTimeInterval: pruneInterval, repeats: true) { [weak self] _ in
+            self?.pruneExpiredCaptures()
+        }
     }
 
     // MARK: - Public Methods
@@ -24,6 +38,8 @@ class CaptureStore: ObservableObject {
     func addCapture(_ record: CaptureRecord) {
         captures.insert(record, at: 0)
         lastCapture = record
+        // Catch anything that aged out since the last check, before the single write below.
+        pruneExpiredCaptures(persist: false)
         saveCaptureMetadata()
         NotificationManager.shared.sendCaptureNotification(record: record)
     }
@@ -60,7 +76,9 @@ class CaptureStore: ObservableObject {
     /// photographs of people accumulated on disk forever with no way for the user to find or
     /// remove them. Retention has to actually delete, both to keep the promise the UI makes
     /// and to avoid hoarding images of third parties indefinitely.
-    func pruneExpiredCaptures() {
+    /// - Parameter persist: pass `false` when the caller is about to write the metadata
+    ///   itself, to avoid encoding and writing `captures.json` twice in a row.
+    func pruneExpiredCaptures(persist: Bool = true) {
         guard let dayLimit = SettingsManager.shared.historyDayLimit,
               let cutoff = Calendar.current.date(byAdding: .day, value: -dayLimit, to: Date())
         else { return }
@@ -73,7 +91,9 @@ class CaptureStore: ObservableObject {
         }
         captures.removeAll { $0.timestamp <= cutoff }
         lastCapture = captures.first
-        saveCaptureMetadata()
+        if persist {
+            saveCaptureMetadata()
+        }
 
         log.info("Pruned \(expired.count, privacy: .public) capture(s) past the \(dayLimit, privacy: .public)-day retention window")
     }

@@ -42,7 +42,7 @@ struct RecordingNoticeView: View {
                 )
             }
 
-            Link("Read the Privacy Policy", destination: URL(string: LegalLinks.privacyPolicy)!)
+            Link("Read the Privacy Policy", destination: LegalLinks.privacyPolicy)
                 .font(.system(size: 12))
 
             Divider()

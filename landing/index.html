@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Watchdog — Your Mac, Always Watching</title>
-  <meta name="description" content="Watchdog is a lightweight macOS menu bar app that detects faces and motion via your camera. Get alerts, record video, and monitor your space — all from the menu bar.">
+  <title>Watchdog — See Who Walked Up to Your Mac</title>
+  <meta name="description" content="Watchdog is a lightweight macOS menu bar app that uses your own Mac's camera to detect faces and motion while you're away. Every capture stays on your device — the app has no network access at all.">
 
   <!-- Fonts: DM Sans (everything) + Cormorant Garamond (italic accent words only) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -494,7 +494,7 @@
     /* ================================================================== */
     .price-legal {
       margin: 12px 0 0; font-size: 11px; line-height: 1.5;
-      color: var(--muted); text-align: left; opacity: 0.85;
+      color: var(--text-muted); text-align: left; opacity: 0.85;
     }
 
     .testimonials-masonry {
@@ -849,8 +849,8 @@
         <i class="ph-light ph-apple-logo"></i>
         Built natively for macOS 13+
       </div>
-      <h1>Your Mac,<br><span class="serif">always watching</span></h1>
-      <p class="hero-sub">A silent, intelligent security monitor that lives in your menu bar. Detect faces, sense motion, and record evidence — without lifting a finger.</p>
+      <h1>Your Mac,<br><span class="serif">watching your desk</span></h1>
+      <p class="hero-sub">Point your own Mac's camera at your own desk and find out who came by while you were away. You switch it on, the menu bar icon stays visible the whole time, macOS keeps its green camera light lit, and every capture stays on the device.</p>
       <div class="hero-actions">
         <a href="https://github.com/markksantos/watchdog/releases" class="btn-primary">
           <i class="ph-light ph-download-simple"></i>
@@ -894,18 +894,18 @@
   <div class="proof reveal">
     <div class="proof-inner">
       <div class="proof-item">
-        <div class="proof-num">&lt;5 MB</div>
+        <div class="proof-num">5 MB</div>
         <div class="proof-label">App size</div>
       </div>
       <div class="proof-sep"></div>
       <div class="proof-item">
-        <div class="proof-num">&lt;1%</div>
-        <div class="proof-label">CPU usage</div>
+        <div class="proof-num">0</div>
+        <div class="proof-label">Network connections</div>
       </div>
       <div class="proof-sep"></div>
       <div class="proof-item">
-        <div class="proof-num">24/7</div>
-        <div class="proof-label">Silent monitoring</div>
+        <div class="proof-num">Always</div>
+        <div class="proof-label">Visible in the menu bar</div>
       </div>
       <div class="proof-sep"></div>
       <div class="proof-item">
@@ -921,8 +921,8 @@
   <section id="features">
     <div class="container">
       <p class="section-label reveal"><i class="ph-light ph-squares-four"></i> Features</p>
-      <h2 class="section-title reveal">Built for <span class="serif">quiet</span> protection</h2>
-      <p class="section-sub reveal">Powerful monitoring packed into a tiny menu bar icon. No windows, no clutter — just intelligent security.</p>
+      <h2 class="section-title reveal">Built to be <span class="serif">obvious</span></h2>
+      <p class="section-sub reveal">Everything runs from a menu bar icon that never hides, on a camera macOS always tells the room is on. Monitoring only ever runs because you turned it on.</p>
 
       <div class="bento">
         <div class="bento-card bento-wide reveal stagger-1">
@@ -953,7 +953,7 @@
         <div class="bento-card reveal stagger-6">
           <div class="bento-icon"><i class="ph-duotone ph-moon"></i></div>
           <h3>Screen Dim</h3>
-          <p>Covers your desktop while you&rsquo;re away so the room can&rsquo;t read it. Lifts with a click, a shortcut, or on its own.</p>
+          <p>Covers your desktop while you&rsquo;re away so the room can&rsquo;t read it. Lifts with a click, or on its own after 15 minutes.</p>
         </div>
       </div>
     </div>
@@ -982,7 +982,7 @@
               <div class="screenshot-placeholder"></div>
               <div class="screenshot-placeholder"></div>
             </div>
-            <p class="screen-text">Capture browser &middot; Detection timeline &middot; Live preview</p>
+            <p class="screen-text">Captures &middot; Live preview &middot; Statistics</p>
           </div>
         </div>
       </div>
@@ -997,7 +997,7 @@
     <div class="container">
       <p class="section-label reveal"><i class="ph-light ph-tag"></i> Pricing</p>
       <h2 class="section-title reveal">Simple, <span class="serif">transparent</span> pricing</h2>
-      <p class="section-sub reveal">Start with a 7-day free trial of Pro. No credit card required.</p>
+      <p class="section-sub reveal">Watchdog is free to use. Pro is a subscription through the App Store, and the annual plan starts with a 7-day free trial.</p>
 
       <div class="pricing-grid">
         <div class="price-card reveal stagger-1">
@@ -1009,7 +1009,9 @@
             <li><i class="ph-light ph-check"></i> Motion detection</li>
             <li><i class="ph-light ph-check"></i> Screenshot captures</li>
             <li><i class="ph-light ph-check"></i> Desktop notifications</li>
-            <li><i class="ph-light ph-check"></i> Basic capture history</li>
+            <li><i class="ph-light ph-check"></i> Choose your camera, resolution &amp; quality</li>
+            <li><i class="ph-light ph-check"></i> PDF export</li>
+            <li><i class="ph-light ph-check"></i> Capture history, kept for 3 days</li>
           </ul>
           <a href="#download" class="btn-card outline">Get Started</a>
         </div>
@@ -1019,15 +1021,16 @@
           <span class="price-period">or $29.99/year &mdash; save 37%</span>
           <ul class="price-features">
             <li><i class="ph-light ph-check"></i> Everything in Free</li>
-            <li><i class="ph-light ph-check"></i> Video recording</li>
-            <li><i class="ph-light ph-check"></i> Scheduled monitoring</li>
-            <li><i class="ph-light ph-check"></i> PDF export reports</li>
+            <li><i class="ph-light ph-check"></i> 5-second video clip on each detection</li>
+            <li><i class="ph-light ph-check"></i> Scheduled monitoring windows</li>
+            <li><i class="ph-light ph-check"></i> Advanced PDF reports</li>
             <li><i class="ph-light ph-check"></i> Unlimited capture history</li>
+            <li><i class="ph-light ph-check"></i> Stats dashboard</li>
+            <li><i class="ph-light ph-check"></i> Alarm siren &amp; flash alert</li>
             <li><i class="ph-light ph-check"></i> Screen dim</li>
-            <li><i class="ph-light ph-check"></i> Multi-camera support</li>
           </ul>
-          <a href="#download" class="btn-card filled">Start 7-Day Free Trial</a>
-          <p class="price-legal">7-day free trial, then $29.99/year. Renews automatically unless cancelled at least 24 hours before the period ends. Cancel anytime in System Settings &rarr; Apple Account &rarr; Subscriptions.</p>
+          <a href="#download" class="btn-card filled">Get Watchdog Pro</a>
+          <p class="price-legal">Watchdog Pro is $3.99/month or $29.99/year. The 7-day free trial is available on the annual plan only; the monthly plan has no trial. Both renew automatically unless cancelled at least 24 hours before the period ends. Payment is charged to your Apple Account. Cancel anytime in System Settings &rarr; Apple Account &rarr; Subscriptions.</p>
         </div>
       </div>
     </div>
@@ -1049,7 +1052,7 @@
             <i class="ph-light ph-plus"></i>
           </button>
           <div class="faq-answer">
-            <p>No. Watchdog runs 100% locally on your Mac. Your camera feed, captures, and settings never leave your device. There's no account, no analytics, no telemetry.</p>
+            <p>No, and it cannot. Watchdog ships without the network entitlement, so the app is not permitted to open a network connection at all. Your camera feed, captures, and settings stay in a folder on your Mac. There's no account, no analytics, no telemetry.</p>
           </div>
         </div>
         <div class="faq-item reveal stagger-2">
@@ -1058,7 +1061,7 @@
             <i class="ph-light ph-plus"></i>
           </button>
           <div class="faq-answer">
-            <p>Watchdog uses less than 1% CPU when monitoring. It's built with native Swift and Apple frameworks, so it's extremely efficient. Battery impact is negligible.</p>
+            <p>It's a native Swift app built on Apple's own Vision and AVFoundation frameworks, and the whole thing is about 5 MB. Actual CPU and battery use depend on your Mac, your camera, and which detection mode you pick — Always-On at a 1-second interval works harder than motion detection at a 30-second one.</p>
           </div>
         </div>
         <div class="faq-item reveal stagger-3">
@@ -1072,11 +1075,11 @@
         </div>
         <div class="faq-item reveal stagger-4">
           <button class="faq-question">
-            Can I use it with multiple cameras?
+            Can I choose which camera it uses?
             <i class="ph-light ph-plus"></i>
           </button>
           <div class="faq-answer">
-            <p>Yes — multi-camera support is available with the Pro plan. You can monitor your built-in camera and external cameras simultaneously.</p>
+            <p>Yes. Preferences lists every camera macOS recognises — built-in or external — and you pick one. That's free, not a Pro feature. Watchdog monitors one camera at a time; it can't run several at once.</p>
           </div>
         </div>
         <div class="faq-item reveal stagger-5">
@@ -1085,7 +1088,7 @@
             <i class="ph-light ph-plus"></i>
           </button>
           <div class="faq-answer">
-            <p>Yes. Pro includes a 7-day free trial with no credit card required. You get full access to all Pro features during the trial period.</p>
+            <p>Yes, on the annual plan — 7 days, with full access to every Pro feature, then $29.99/year. The monthly plan has no trial. Like any App Store subscription it's billed through your Apple Account, so an Apple Account with a payment method on file is required to start it.</p>
           </div>
         </div>
       </div>

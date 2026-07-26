@@ -51,7 +51,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Set up notifications (deferred until app has a bundle proxy)
         NotificationManager.shared.setup()
 
+        // Clear attachment copies left behind by a previous session that didn't exit
+        // cleanly — a crash or force-quit skips `applicationWillTerminate`.
+        NotificationManager.shared.clearTemporaryAttachments()
+
         // Drop any capture media that has aged out of the free tier's retention window.
+        // CaptureStore also re-checks hourly, for sessions that stay open for days.
         captureStore.pruneExpiredCaptures()
     }
 

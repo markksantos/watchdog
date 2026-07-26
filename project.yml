@@ -1,0 +1,122 @@
+# XcodeGen spec for the Mac App Store build.
+#
+# `Package.swift` still builds the same sources for `swift build` / `swift test` / CI, but
+# App Store Connect rejects hand-assembled bundles (missing DTXcode* keys, unsigned, no
+# provisioning profile). The shipping product must come out of a real Xcode target, which
+# is what this file generates.
+#
+#   scripts/generate-xcodeproj.sh     -> Watchdog.xcodeproj
+#
+# The signing team lives in AppSupport/Signing.xcconfig so regenerating the project never
+# clobbers it. See docs/app-store-submission.md.
+
+name: Watchdog
+options:
+  bundleIdPrefix: com.markstudios
+  deploymentTarget:
+    macOS: "13.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+configs:
+  Debug: debug
+  Release: release
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "13.0"
+    ALWAYS_SEARCH_USER_PATHS: NO
+    CLANG_ENABLE_OBJC_ARC: YES
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    DEAD_CODE_STRIPPING: YES
+    GCC_NO_COMMON_BLOCKS: YES
+    SWIFT_EMIT_LOC_STRINGS: YES
+  configs:
+    Debug:
+      SWIFT_OPTIMIZATION_LEVEL: "-Onone"
+      SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+      ONLY_ACTIVE_ARCH: YES
+    Release:
+      SWIFT_OPTIMIZATION_LEVEL: "-O"
+      SWIFT_COMPILATION_MODE: wholemodule
+      ONLY_ACTIVE_ARCH: NO
+
+targets:
+  Watchdog:
+    type: application
+    platform: macOS
+    configFiles:
+      Debug: AppSupport/Signing.xcconfig
+      Release: AppSupport/Signing.xcconfig
+    sources:
+      - path: Watchdog
+        excludes:
+          - "Info.plist"
+          - "Watchdog.entitlements"
+      - path: AppSupport/Assets.xcassets
+    settings:
+      base:
+        PRODUCT_NAME: Watchdog
+        PRODUCT_BUNDLE_IDENTIFIER: com.markstudios.watchdog
+        INFOPLIST_FILE: Watchdog/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        CODE_SIGN_ENTITLEMENTS: Watchdog/Watchdog.entitlements
+        CODE_SIGN_STYLE: Automatic
+        ENABLE_HARDENED_RUNTIME: YES
+        ENABLE_APP_SANDBOX: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        COMBINE_HIDPI_IMAGES: YES
+        LD_RUNPATH_SEARCH_PATHS: ["$(inherited)", "@executable_path/../Frameworks"]
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+    # NO `info:` BLOCK HERE, DELIBERATELY.
+    #
+    # Adding one makes XcodeGen *author* the Info.plist at that path on every generate,
+    # overwriting whatever is checked in. That silently destroyed NSCameraUsageDescription,
+    # LSUIElement, LSApplicationCategoryType, ITSAppUsesNonExemptEncryption and the
+    # copyright string — an app that opens the camera with no usage description crashes on
+    # first use and is rejected outright.
+    #
+    # Watchdog/Info.plist is hand-authored and is the single source of truth. It is wired
+    # in via INFOPLIST_FILE above, with GENERATE_INFOPLIST_FILE: NO.
+
+  WatchdogTests:
+    type: bundle.unit-test
+    platform: macOS
+    configFiles:
+      Debug: AppSupport/Signing.xcconfig
+      Release: AppSupport/Signing.xcconfig
+    sources:
+      - path: Tests/WatchdogTests
+    dependencies:
+      - target: Watchdog
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.markstudios.watchdog.tests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Watchdog.app/Contents/MacOS/Watchdog"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+
+schemes:
+  Watchdog:
+    build:
+      targets:
+        Watchdog: all
+        WatchdogTests: [test]
+    run:
+      config: Debug
+      # StoreKit Testing: purchases resolve against Watchdog.storekit instead of the real
+      # App Store, so the paywall can be exercised before the products exist in ASC.
+      storeKitConfiguration: Watchdog.storekit
+    test:
+      config: Debug
+      targets:
+        - WatchdogTests
+      gatherCoverageData: true
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release

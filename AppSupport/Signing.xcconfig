@@ -1,0 +1,17 @@
+// Code-signing configuration for the Mac App Store build.
+//
+// Kept out of project.yml so that regenerating Watchdog.xcodeproj never clobbers it.
+//
+// DEVELOPMENT_TEAM is your 10-character Apple Developer Team ID. Find it at
+// https://developer.apple.com/account -> Membership Details -> Team ID, or run:
+//
+//     xcrun xcodebuild -showBuildSettings -project Watchdog.xcodeproj 2>/dev/null | grep TEAM
+//
+// Leave it empty and Xcode will prompt you to pick a team the first time you build; set it
+// here and command-line archives (scripts/archive-appstore.sh) work unattended.
+DEVELOPMENT_TEAM =
+
+// Automatic signing picks the right identity per action:
+//   build/run   -> Apple Development
+//   archive     -> Apple Distribution + "Mac App Store" provisioning profile
+CODE_SIGN_STYLE = Automatic

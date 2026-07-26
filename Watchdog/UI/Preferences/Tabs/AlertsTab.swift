@@ -132,7 +132,7 @@ struct AlertsTab: View {
 
                 if settingsManager.screenDimEnabled {
                     TipCallout(
-                        text: "Press ⌘⇧L or click Restore Screen to lift the dim; it also lifts on its own after 15 minutes. Watchdog stays in the menu bar and every system shortcut keeps working.",
+                        text: "Click Restore Screen to lift the dim; it also lifts on its own after 15 minutes. Watchdog stays in the menu bar and every system shortcut keeps working.",
                         systemImage: "info.circle.fill"
                     )
                 }

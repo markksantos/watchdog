@@ -8,7 +8,7 @@ import Combine
 /// camera indicator:
 ///   - the menu bar item stays visible the whole time
 ///   - ⌘Q, ⌘Tab, ⌘⇧Escape and every other system shortcut keep working
-///   - a visible button dismisses the overlay, in addition to the ⌘⇧L shortcut
+///   - a visible, always-present button dismisses the overlay
 ///   - the overlay times out on its own after `autoDismissInterval`
 ///
 /// Apps that trap the user behind an inescapable window are rejected under App Review
@@ -89,7 +89,11 @@ private class DimView: NSView {
     weak var manager: ScreenDimManager?
 
     private let label = NSTextField(labelWithString: "Watchdog is monitoring. The camera is active.")
-    private let hint = NSTextField(labelWithString: "Press ⌘⇧L to restore the screen")
+    /// No keyboard shortcut is advertised here. A borderless window cannot become key, so
+    /// `keyDown` below never fires for it, and a sandboxed app cannot register a global
+    /// hotkey — any shortcut printed here would be a promise the app cannot keep. The
+    /// button is the dismissal affordance, backed by the 15-minute timeout.
+    private let hint = NSTextField(labelWithString: "The screen restores automatically after 15 minutes.")
     private let button = NSButton(title: "Restore Screen", target: nil, action: nil)
 
     init(manager: ScreenDimManager) {
@@ -131,15 +135,10 @@ private class DimView: NSView {
     override var acceptsFirstResponder: Bool { true }
 
     override func keyDown(with event: NSEvent) {
-        // ⌘⇧L — key code 37 is 'L'
-        if event.keyCode == 37,
-           event.modifierFlags.contains(.command),
-           event.modifierFlags.contains(.shift) {
-            manager?.disable()
-            return
-        }
-        // Anything else falls through to the system. Never swallow key events here:
-        // the user must always be able to quit, switch apps, or reach the menu bar.
+        // Never swallow key events: the user must always be able to quit, switch apps, or
+        // reach the menu bar. (In practice this is unreachable — the host window is
+        // borderless and so can never become key — which is exactly why no keyboard
+        // shortcut is advertised on the overlay.)
         super.keyDown(with: event)
     }
 }

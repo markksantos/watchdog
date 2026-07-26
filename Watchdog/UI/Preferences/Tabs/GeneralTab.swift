@@ -101,11 +101,11 @@ struct GeneralTab: View {
             .controlSize(.small)
 
             HStack(spacing: 6) {
-                Link("Privacy Policy", destination: URL(string: LegalLinks.privacyPolicy)!)
+                Link("Privacy Policy", destination: LegalLinks.privacyPolicy)
                 Text("·").foregroundColor(.secondary)
-                Link("Terms of Use", destination: URL(string: LegalLinks.termsOfUse)!)
+                Link("Terms of Use", destination: LegalLinks.termsOfUse)
                 Text("·").foregroundColor(.secondary)
-                Link("Support", destination: URL(string: LegalLinks.support)!)
+                Link("Support", destination: LegalLinks.support)
                 Spacer()
             }
             .font(.system(size: 11))
@@ -130,7 +130,7 @@ struct GeneralTab: View {
                     subtitle: "Renews \(expiresDate.formatted(date: .abbreviated, time: .omitted))"
                 )
 
-                Link("Manage Subscription", destination: URL(string: LegalLinks.manageSubscriptions)!)
+                Link("Manage Subscription", destination: LegalLinks.manageSubscriptions)
                     .font(.system(size: 11))
 
             case .trial(let daysRemaining):

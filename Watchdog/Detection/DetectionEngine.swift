@@ -107,7 +107,30 @@ class DetectionEngine: NSObject, ObservableObject {
 
     func manualCapture() {
         guard isMonitoring else { return }
-        captureFrame(type: .alwaysOn, confidence: 1.0)
+        // The user pressed the button, so the schedule doesn't apply — it governs
+        // *automatic* detection, not an explicit request.
+        captureFrame(type: .alwaysOn, confidence: 1.0, respectsSchedule: false)
+    }
+
+    /// Whether automatic detection should be running right now.
+    ///
+    /// Two things were wrong with the previous check, which lived inline in
+    /// `captureOutput(_:didOutput:from:)`:
+    ///
+    /// 1. It never consulted `SubscriptionManager`, so a lapsed subscriber kept a Pro-only
+    ///    restriction applied to their app — paying nothing and getting *less* function.
+    /// 2. It only guarded the sample-buffer delegate. The Always-On timer and the
+    ///    wake-burst timer both call `captureFrame` directly, so in Always-On mode the
+    ///    schedule was ignored completely — a paid feature that silently did nothing in
+    ///    one of the three detection modes.
+    ///
+    /// Gating at `captureFrame` fixes both, because every automatic capture goes through it.
+    private var isWithinActiveSchedule: Bool {
+        let config = SettingsManager.shared.scheduleConfig
+        guard config.isEnabled,
+              SubscriptionManager.shared.hasAccess(to: .detectionScheduling)
+        else { return true }
+        return config.isCurrentlyActive()
     }
 
     func burstCapture(duration: TimeInterval) {
@@ -193,7 +216,9 @@ class DetectionEngine: NSObject, ObservableObject {
         CaptureStore.shared.updateCapture(lastCapture.id, videoPath: videoPath)
     }
 
-    private func captureFrame(type: DetectionMode, confidence: Float) {
+    private func captureFrame(type: DetectionMode, confidence: Float, respectsSchedule: Bool = true) {
+        if respectsSchedule && !isWithinActiveSchedule { return }
+
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let record = self?.cameraManager.captureCurrentFrame(
                 detectionType: type,
@@ -209,10 +234,9 @@ class DetectionEngine: NSObject, ObservableObject {
 
 extension DetectionEngine: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        // Check schedule — skip processing outside active window
-        if SettingsManager.shared.scheduleConfig.isEnabled && !SettingsManager.shared.scheduleConfig.isCurrentlyActive() {
-            return
-        }
+        // Skip analysis outside the active window. `captureFrame` enforces the same rule
+        // for the timer-driven paths that never reach this delegate.
+        guard isWithinActiveSchedule else { return }
 
         cameraManager.updateLatestBuffer(sampleBuffer)
         currentAnalyzer?.analyze(sampleBuffer: sampleBuffer)

@@ -1,8 +1,11 @@
 import Foundation
 import AppKit
 import PDFKit
+import os
 
 struct PDFExporter {
+    private static let log = Logger(subsystem: "com.markstudios.watchdog", category: "export")
+
     static func exportPDF(captures: [CaptureRecord]) {
         let panel = NSSavePanel()
         let dateStr = DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .none)
@@ -34,7 +37,7 @@ struct PDFExporter {
         var mediaBox = CGRect(x: 0, y: 0, width: pageWidth, height: pageHeight)
 
         guard let context = CGContext(url as CFURL, mediaBox: &mediaBox, nil) else {
-            print("[Watchdog] Failed to create PDF context")
+            log.error("Failed to create PDF context")
             return
         }
 
@@ -132,7 +135,7 @@ struct PDFExporter {
         }
 
         context.closePDF()
-        print("[Watchdog] PDF exported to \(url.path)")
+        log.info("PDF exported to \(url.path, privacy: .private)")
     }
 
     // MARK: - Advanced PDF (Pro)
@@ -145,7 +148,7 @@ struct PDFExporter {
         var mediaBox = CGRect(x: 0, y: 0, width: pageWidth, height: pageHeight)
 
         guard let context = CGContext(url as CFURL, mediaBox: &mediaBox, nil) else {
-            print("[Watchdog] Failed to create PDF context")
+            log.error("Failed to create PDF context")
             return
         }
 
@@ -316,7 +319,7 @@ struct PDFExporter {
         }
 
         context.closePDF()
-        print("[Watchdog] Advanced PDF exported to \(url.path)")
+        log.info("Advanced PDF exported to \(url.path, privacy: .private)")
     }
 
     private static func aspectFitRect(imageSize: CGSize, into rect: CGRect) -> CGRect {
