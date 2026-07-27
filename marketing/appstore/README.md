@@ -18,8 +18,21 @@ app window** composited in and a headline. Upload these in order:
 4. `04-appearance.png` — color-pop desk, "Make it yours"
 5. `05-alerts.png` — red-lit room, "Know the moment it happens"
 6. `06-privacy.png` — cozy home, "Everything stays on your Mac"
+7. `07-gallery.png` — morning desk, "Every capture, organised by day" ⭐ shows the capture grid
 
 `backgrounds/` holds the AI scenes (2560px) without UI or text, for re-editing.
+
+### Sample captures (`../sample-captures/`)
+
+The gallery slide needed capture thumbnails, and the real ones are photographs of whoever was in
+front of this Mac. `sample-captures/*.jpg` are six **synthetic, AI-generated** webcam-style stills
+(no real person is depicted) used purely so the gallery can be shown without publishing anyone's
+likeness. The surrounding UI, grouping, timestamps and filters are all genuinely the app.
+
+To repopulate the gallery for a demo or a re-shoot, write a `captures.json` into your capture
+folder with records pointing at those absolute paths — schema is `CaptureRecord`
+(`id`, `timestamp` as seconds since 2001-01-01, `detectionType`, `confidence`, `imagePath`).
+Give them recent timestamps or retention will delete them.
 
 **Compliance note:** each frame contains a genuine screenshot of the app, so it satisfies the
 "screenshots must show the app" rule while still selling the product. Pure AI images with no UI
