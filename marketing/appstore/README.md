@@ -30,6 +30,10 @@ would risk rejection — that's why these are composites, not illustrations.
 The earlier set: real UI on a flat branded gradient. Cleaner but less punchy. Keep as a fallback
 or for a minimalist listing.
 
+⚠️ **`06-storage.png` in this set is out of date** — it still shows the Cloud Backup panel that
+`StorageTab.swift` no longer renders. The cinematic `06-privacy.png` has been regenerated; this
+one has not. Recapture it before using this set.
+
 ## `video/` — App Preview video
 
 - `watchdog-preview.mp4` — 1920×1080, H.264, 24s, 30fps. Within Apple's 15–30s App Preview spec.
