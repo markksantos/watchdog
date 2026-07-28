@@ -45,6 +45,10 @@ struct PreferencesView: View {
     @State private var showRecordingNotice = false
     @State private var loginItemError: String?
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// Carries the selected tab's highlight between buttons instead of redrawing it in place.
+    @Namespace private var tabNamespace
+
     private var accent: Color { appearance.accentColor }
 
     var body: some View {
@@ -56,6 +60,10 @@ struct PreferencesView: View {
             ScrollView {
                 content
                     .padding(16)
+                    // Keyed on the tab so switching swaps the whole pane and the transition
+                    // has two distinct views to cross between.
+                    .id(selectedTab)
+                    .transition(WatchdogTransition.pane(reduceMotion: reduceMotion))
             }
             .background(WatchdogColor.canvas)
         }
@@ -95,7 +103,25 @@ struct PreferencesView: View {
         HStack(spacing: 4) {
             ForEach(PreferencesTab.allCases) { tab in
                 tabButton(tab)
+                    // An invisible per-tab anchor. The pill below follows whichever of these
+                    // is currently selected.
+                    .background(
+                        Color.clear.matchedGeometryEffect(id: tab, in: tabNamespace, isSource: true)
+                    )
             }
+        }
+        // The highlight is one persistent view that re-targets, rather than a rectangle that
+        // is removed from one button and inserted into another. SwiftUI only interpolates a
+        // frame it can see continuously; the insert/remove form just cuts, which is exactly
+        // what it did here before — verified by frame capture, not by eye.
+        .background(alignment: .leading) {
+            RoundedRectangle(cornerRadius: WatchdogMetrics.pillCornerRadius)
+                .fill(accent)
+                .matchedGeometryEffect(
+                    id: selectedTab,
+                    in: tabNamespace,
+                    isSource: false
+                )
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
@@ -106,11 +132,18 @@ struct PreferencesView: View {
     private func tabButton(_ tab: PreferencesTab) -> some View {
         let isSelected = selectedTab == tab
         return Button {
-            selectedTab = tab
+            if reduceMotion {
+                selectedTab = tab
+            } else {
+                withAnimation(WatchdogMotion.selection) { selectedTab = tab }
+            }
         } label: {
             VStack(spacing: 3) {
                 Image(systemName: tab.icon)
                     .font(.system(size: 14))
+                    // A hair larger while selected, so the active tab reads even in a
+                    // screenshot where the accent fill has been desaturated.
+                    .scaleEffect(isSelected && !reduceMotion ? 1.08 : 1)
                 Text(tab.title)
                     .font(.system(size: 11, weight: isSelected ? .semibold : .regular))
                     .lineLimit(1)
@@ -120,13 +153,9 @@ struct PreferencesView: View {
             .padding(.horizontal, 8)
             .padding(.vertical, 8)
             .frame(maxWidth: .infinity)
-            .background(
-                RoundedRectangle(cornerRadius: WatchdogMetrics.pillCornerRadius)
-                    .fill(isSelected ? accent : Color.clear)
-            )
             .contentShape(RoundedRectangle(cornerRadius: WatchdogMetrics.pillCornerRadius))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle(scale: 0.95))
         .accessibilityAddTraits(isSelected ? [.isSelected, .isButton] : .isButton)
     }
 

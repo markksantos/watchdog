@@ -8,6 +8,8 @@ struct PaywallView: View {
     @State private var purchaseError: String?
     @State private var restoreMessage: String?
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         ZStack {
             ScrollView {
@@ -105,13 +107,17 @@ struct PaywallView: View {
 
     private var featuresSection: some View {
         VStack(spacing: 12) {
-            ForEach(ProFeature.allCases, id: \.rawValue) { feature in
-                featureRow(feature)
+            ForEach(Array(ProFeature.allCases.enumerated()), id: \.element.rawValue) { index, feature in
+                featureRow(feature, index: index)
             }
         }
     }
 
-    private func featureRow(_ feature: ProFeature) -> some View {
+    /// The eight Pro features cascade in rather than arriving as one block.
+    ///
+    /// The stagger is 30ms per row — the whole list is settled inside a third of a second, so
+    /// it reads as the list assembling rather than as something you have to wait through.
+    private func featureRow(_ feature: ProFeature, index: Int) -> some View {
         HStack(spacing: 14) {
             Image(systemName: feature.icon)
                 .font(.system(size: 16, weight: .medium))
@@ -128,6 +134,7 @@ struct PaywallView: View {
 
             Spacer()
         }
+        .modifier(StaggeredEntrance(index: index))
     }
 
     // MARK: - Plan States
@@ -220,9 +227,16 @@ struct PaywallView: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(isSelected ? Color.accentColor : Color.secondary.opacity(0.3), lineWidth: isSelected ? 2 : 1)
         )
+        // The chosen plan sits a touch forward of the other. This is the one decision on the
+        // sheet, so it should be obvious which way it is currently set.
+        .scaleEffect(isSelected && !reduceMotion ? 1.02 : 1)
         .contentShape(Rectangle())
         .onTapGesture {
-            selectedPlan = id
+            if reduceMotion {
+                selectedPlan = id
+            } else {
+                withAnimation(WatchdogMotion.selection) { selectedPlan = id }
+            }
         }
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)

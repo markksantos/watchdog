@@ -9,6 +9,10 @@ struct PopoverView: View {
 
     @State private var showCameraPermissionAlert = false
     @State private var showRecordingNotice = false
+    /// Bumped whenever a new capture lands, to re-key the thumbnail so it crossfades.
+    @State private var lastCaptureID: CaptureRecord.ID?
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var openMainWindow: () -> Void
     var openPreferences: () -> Void
@@ -34,6 +38,7 @@ struct PopoverView: View {
                     }
                 }
                 .padding(12)
+                .wdMotion(WatchdogMotion.gentle, value: subscriptionManager.isProUser)
             }
 
             Divider()
@@ -91,13 +96,17 @@ struct PopoverView: View {
             Spacer()
 
             HStack(spacing: 5) {
-                Circle()
-                    .fill(isMonitoring ? WatchdogColor.live : Color.secondary.opacity(0.5))
-                    .frame(width: 7, height: 7)
+                PulsingDot(
+                    color: isMonitoring ? WatchdogColor.live : Color.secondary.opacity(0.5),
+                    isAnimating: isMonitoring
+                )
                 Text(isMonitoring ? "Live" : "Idle")
                     .font(.system(size: 11, weight: .medium))
                     .foregroundColor(isMonitoring ? WatchdogColor.live : .secondary)
+                    .id(isMonitoring)
+                    .transition(WatchdogTransition.pop(reduceMotion: reduceMotion))
             }
+            .wdFade(WatchdogMotion.standard, value: isMonitoring)
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
@@ -122,6 +131,7 @@ struct PopoverView: View {
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
             .background(Capsule().fill(color))
+            .transition(WatchdogTransition.pop(reduceMotion: reduceMotion))
     }
 
     // MARK: - Status
@@ -133,9 +143,11 @@ struct PopoverView: View {
                 set: { $0 ? detectionEngine.startMonitoring() : detectionEngine.stopMonitoring() }
             )) {
                 HStack(spacing: 8) {
-                    Image(systemName: isMonitoring ? "video.fill" : "video.slash.fill")
-                        .font(.system(size: 13))
-                        .foregroundColor(isMonitoring ? WatchdogColor.live : .secondary)
+                    AnimatedSymbol(
+                        systemName: isMonitoring ? "video.fill" : "video.slash.fill",
+                        font: .system(size: 13)
+                    )
+                    .foregroundColor(isMonitoring ? WatchdogColor.live : .secondary)
                     Text("Monitoring")
                         .font(.system(size: 13, weight: .medium))
                     Spacer()
@@ -155,6 +167,7 @@ struct PopoverView: View {
                 .controlSize(.small)
                 .buttonStyle(.borderedProminent)
                 .tint(accent)
+                .transition(WatchdogTransition.reveal(reduceMotion: reduceMotion))
             }
 
             if settingsManager.scheduleConfig.isEnabled {
@@ -166,6 +179,7 @@ struct PopoverView: View {
                     Spacer()
                 }
                 .foregroundColor(.secondary)
+                .transition(WatchdogTransition.reveal(reduceMotion: reduceMotion))
             }
         }
         .padding(12)
@@ -181,6 +195,10 @@ struct PopoverView: View {
                     lineWidth: 1
                 )
         )
+        // The card grows and its border lights up when monitoring starts; one animation
+        // covering the whole card keeps those in step instead of racing each other.
+        .wdMotion(WatchdogMotion.standard, value: isMonitoring)
+        .wdMotion(WatchdogMotion.standard, value: settingsManager.scheduleConfig.isEnabled)
     }
 
     // MARK: - Detection mode
@@ -217,11 +235,13 @@ struct PopoverView: View {
                     .kerning(0.4)
                 Spacer()
                 if captureStore.todayCount > 0 {
-                    Text("\(captureStore.todayCount) today")
+                    AnimatedNumber(value: captureStore.todayCount) { "\($0) today" }
                         .font(.system(size: 10))
                         .foregroundColor(.secondary)
+                        .transition(WatchdogTransition.pop(reduceMotion: reduceMotion))
                 }
             }
+            .wdFade(WatchdogMotion.standard, value: captureStore.todayCount)
 
             HStack(spacing: 10) {
                 if let lastCapture = captureStore.captures.first,
@@ -231,6 +251,10 @@ struct PopoverView: View {
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 68, height: 68)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
+                        // Re-keyed per capture so a new detection crossfades the thumbnail
+                        // instead of swapping it between frames.
+                        .id(lastCapture.id)
+                        .transition(WatchdogTransition.pop(reduceMotion: reduceMotion))
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(lastCapture.shortTimestamp)
@@ -239,6 +263,8 @@ struct PopoverView: View {
                             .font(.system(size: 10))
                             .foregroundColor(.secondary)
                     }
+                    .id(lastCapture.id)
+                    .transition(.opacity)
                 } else {
                     placeholderThumbnail
                     Text("No captures yet")
@@ -248,6 +274,7 @@ struct PopoverView: View {
 
                 Spacer()
             }
+            .wdFade(WatchdogMotion.gentle, value: lastCaptureID)
 
             Button(action: openMainWindow) {
                 HStack(spacing: 6) {
@@ -257,6 +284,9 @@ struct PopoverView: View {
                 .frame(maxWidth: .infinity)
             }
             .controlSize(.small)
+        }
+        .onReceive(captureStore.$captures) { captures in
+            lastCaptureID = captures.first?.id
         }
     }
 
@@ -284,6 +314,7 @@ struct PopoverView: View {
         .controlSize(.small)
         .buttonStyle(.borderedProminent)
         .tint(WatchdogColor.pro)
+        .transition(WatchdogTransition.reveal(reduceMotion: reduceMotion))
     }
 
     // MARK: - Bottom actions

@@ -148,14 +148,24 @@ struct StatCard: View {
     let value: String
     let icon: String
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var hasAppeared = false
+    @State private var isHovering = false
+
     var body: some View {
         VStack(spacing: 8) {
             Image(systemName: icon)
                 .font(.title2)
                 .foregroundColor(.accentColor)
+                .scaleEffect(isHovering && !reduceMotion ? 1.1 : 1)
             Text(value)
                 .font(.title)
                 .fontWeight(.bold)
+                .monospacedDigit()
+                // Stats recompute as captures arrive; crossfading the figure stops the row
+                // twitching every time a number ticks over.
+                .id(value)
+                .transition(.opacity)
             Text(title)
                 .font(.caption)
                 .foregroundColor(.secondary)
@@ -164,6 +174,15 @@ struct StatCard: View {
         .padding()
         .background(.ultraThinMaterial)
         .cornerRadius(12)
+        .wdFade(WatchdogMotion.standard, value: value)
+        .wdFade(WatchdogMotion.standard, value: isHovering)
+        .onHover { isHovering = $0 }
+        .opacity(hasAppeared || reduceMotion ? 1 : 0)
+        .scaleEffect(hasAppeared || reduceMotion ? 1 : 0.94)
+        .onAppear {
+            guard !reduceMotion else { return }
+            withAnimation(WatchdogMotion.gentle) { hasAppeared = true }
+        }
     }
 }
 

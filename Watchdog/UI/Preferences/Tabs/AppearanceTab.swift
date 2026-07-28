@@ -4,6 +4,10 @@ import SwiftUI
 struct AppearanceTab: View {
     @ObservedObject private var appearance = AppearanceSettings.shared
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// Carries the selection ring between accent swatches.
+    @Namespace private var accentNamespace
+
     private var accent: Color { appearance.accentColor }
 
     var body: some View {
@@ -48,8 +52,22 @@ struct AppearanceTab: View {
             info: "Tints selected controls and highlights throughout the app. Status colours — green for live, amber for warnings — stay fixed so they keep their meaning."
         ) {
             HStack(spacing: 10) {
-                ForEach(AccentChoice.allCases) { choice in
-                    swatch(choice)
+                HStack(spacing: 10) {
+                    ForEach(AccentChoice.allCases) { choice in
+                        swatch(choice)
+                    }
+                }
+                // One ring that moves between swatches. Built as a follower for the same
+                // reason as the tab pill: an inserted/removed ring cuts instead of sliding.
+                .background(alignment: .leading) {
+                    Circle()
+                        .strokeBorder(Color.primary.opacity(0.65), lineWidth: 2)
+                        .frame(width: 33, height: 33)
+                        .matchedGeometryEffect(
+                            id: appearance.accent,
+                            in: accentNamespace,
+                            isSource: false
+                        )
                 }
                 Spacer()
             }
@@ -59,12 +77,18 @@ struct AppearanceTab: View {
     private func swatch(_ choice: AccentChoice) -> some View {
         let isSelected = appearance.accent == choice
         return Button {
-            appearance.accent = choice
+            if reduceMotion {
+                appearance.accent = choice
+            } else {
+                withAnimation(WatchdogMotion.selection) { appearance.accent = choice }
+            }
         } label: {
             ZStack {
                 Circle()
                     .fill(choice.color)
                     .frame(width: 26, height: 26)
+                    // The chosen colour sits slightly proud of the others.
+                    .scaleEffect(isSelected && !reduceMotion ? 1.08 : 1)
 
                 if choice == .system {
                     Image(systemName: "sparkles")
@@ -72,16 +96,15 @@ struct AppearanceTab: View {
                         .foregroundColor(.white)
                 }
 
-                if isSelected {
-                    Circle()
-                        .strokeBorder(Color.primary.opacity(0.65), lineWidth: 2)
-                        .frame(width: 33, height: 33)
-                }
             }
             .frame(width: 36, height: 36)
             .contentShape(Circle())
+            // Anchor the travelling ring to this swatch.
+            .background(
+                Color.clear.matchedGeometryEffect(id: choice, in: accentNamespace, isSource: true)
+            )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle(scale: 0.88))
         .help(choice.displayName)
         .accessibilityLabel(choice.displayName)
         .accessibilityAddTraits(isSelected ? [.isSelected, .isButton] : .isButton)

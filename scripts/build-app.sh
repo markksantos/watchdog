@@ -4,12 +4,32 @@ set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 APP_NAME="Watchdog"
-BUILD_DIR="$PROJECT_DIR/.build/arm64-apple-macosx/debug"
 APP_BUNDLE="$PROJECT_DIR/build/$APP_NAME.app"
 
 echo "Building $APP_NAME..."
 cd "$PROJECT_DIR"
 swift build
+
+# Ask SwiftPM where it put the binary rather than hardcoding a path.
+#
+# This used to be a literal ".build/arm64-apple-macosx/debug", which newer toolchains no
+# longer write to — they emit ".build/out/Products/Debug" instead. The old directory keeps
+# whatever binary was last built there, so the script went on cheerfully packaging a
+# days-old executable and reporting success. Nothing failed; the .app was simply stale,
+# which is a far worse failure than an error.
+BUILD_DIR="$(swift build --show-bin-path)"
+
+if [ ! -x "$BUILD_DIR/$APP_NAME" ]; then
+    echo "error: no $APP_NAME binary at $BUILD_DIR — swift build --show-bin-path returned a path this script cannot use." >&2
+    exit 1
+fi
+
+# The binary must be newer than the newest source file, or we are bundling something stale.
+NEWEST_SOURCE="$(find "$PROJECT_DIR/Watchdog" -name '*.swift' -newer "$BUILD_DIR/$APP_NAME" -print -quit)"
+if [ -n "$NEWEST_SOURCE" ]; then
+    echo "error: $NEWEST_SOURCE is newer than the built binary — refusing to bundle a stale build." >&2
+    exit 1
+fi
 
 echo "Assembling $APP_NAME.app bundle..."
 rm -rf "$APP_BUNDLE"

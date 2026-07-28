@@ -14,6 +14,11 @@ struct SegmentedPills<Option: Hashable, Label: View>: View {
     var maxPerRow: Int = 6
     @ViewBuilder var label: (Option) -> Label
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// Lets the selected pill's fill slide between positions rather than blinking out of one and
+    /// into another. Scoped per instance so two pickers on screen never adopt each other's fill.
+    @Namespace private var selectionNamespace
+
     private var rows: [[Option]] {
         guard options.count > maxPerRow else { return [options] }
         return stride(from: 0, to: options.count, by: maxPerRow).map {
@@ -22,11 +27,30 @@ struct SegmentedPills<Option: Hashable, Label: View>: View {
     }
 
     var body: some View {
+        pillRows
+            // One persistent fill that re-targets the selected pill, rather than a rectangle
+            // removed from one pill and inserted into another. The insert/remove form does
+            // not interpolate — it cuts — which is what this control used to do.
+            .background(alignment: .topLeading) {
+                RoundedRectangle(cornerRadius: WatchdogMetrics.pillCornerRadius)
+                    .fill(accent)
+                    .matchedGeometryEffect(id: selection, in: selectionNamespace, isSource: false)
+            }
+    }
+
+    private var pillRows: some View {
         VStack(spacing: 6) {
             ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
                 HStack(spacing: 6) {
                     ForEach(row, id: \.self) { option in
                         pill(for: option)
+                            .background(
+                                Color.clear.matchedGeometryEffect(
+                                    id: option,
+                                    in: selectionNamespace,
+                                    isSource: true
+                                )
+                            )
                     }
                     // Pad a short final row so its pills keep the same width as the rows above.
                     if row.count < maxPerRow && rows.count > 1 {
@@ -42,7 +66,12 @@ struct SegmentedPills<Option: Hashable, Label: View>: View {
     private func pill(for option: Option) -> some View {
         let isSelected = option == selection
         return Button {
-            selection = option
+            // Animated here rather than on the binding so the caller can't accidentally drop it.
+            if reduceMotion {
+                selection = option
+            } else {
+                withAnimation(WatchdogMotion.selection) { selection = option }
+            }
         } label: {
             label(option)
                 .font(.system(size: 12, weight: isSelected ? .semibold : .regular))
@@ -52,13 +81,16 @@ struct SegmentedPills<Option: Hashable, Label: View>: View {
                 .padding(.horizontal, 10)
                 .padding(.vertical, 7)
                 .frame(maxWidth: .infinity)
+                // The travelling accent fill sits behind the whole control, so the selected
+                // pill leaves its track clear for the accent to show through. Painting the
+                // grey track over it would mute the accent to a wash.
                 .background(
                     RoundedRectangle(cornerRadius: WatchdogMetrics.pillCornerRadius)
-                        .fill(isSelected ? accent : Color.secondary.opacity(0.10))
+                        .fill(isSelected ? Color.clear : Color.secondary.opacity(0.10))
                 )
                 .contentShape(RoundedRectangle(cornerRadius: WatchdogMetrics.pillCornerRadius))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle())
         .accessibilityAddTraits(isSelected ? [.isSelected, .isButton] : .isButton)
     }
 }

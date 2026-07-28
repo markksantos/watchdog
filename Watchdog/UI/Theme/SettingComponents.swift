@@ -12,11 +12,12 @@ struct InfoButton: View {
         Button {
             isShowing.toggle()
         } label: {
-            Image(systemName: "info.circle")
+            Image(systemName: isShowing ? "info.circle.fill" : "info.circle")
                 .font(.system(size: 12))
-                .foregroundColor(.secondary)
+                .foregroundColor(isShowing ? WatchdogColor.primary : .secondary)
+                .wdFade(value: isShowing)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle(scale: 0.88))
         .help(text)
         .accessibilityLabel("More information")
         .popover(isPresented: $isShowing, arrowEdge: .bottom) {
@@ -60,6 +61,11 @@ struct SettingHeader: View {
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(accent)
                     .monospacedDigit()
+                    // The header value tracks a slider, so it changes constantly while
+                    // dragging. A crossfade keyed on the string keeps that readable.
+                    .id(value)
+                    .transition(.opacity)
+                    .wdFade(WatchdogMotion.press, value: value)
             }
 
             if let info {
@@ -80,6 +86,10 @@ struct SettingCard<Content: View>: View {
     var info: String?
     @ViewBuilder var content: Content
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var hasAppeared = false
+    @State private var isHovering = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             SettingHeader(icon: icon, title: title, accent: accent, value: value, info: info)
@@ -93,8 +103,23 @@ struct SettingCard<Content: View>: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: WatchdogMetrics.cardCornerRadius)
-                .strokeBorder(WatchdogColor.cardBorder, lineWidth: 1)
+                // The border warms toward the accent under the pointer. Enough to tell you
+                // which card you're about to interact with, not enough to look selected.
+                .strokeBorder(
+                    isHovering ? accent.opacity(0.35) : WatchdogColor.cardBorder,
+                    lineWidth: 1
+                )
         )
+        .wdFade(WatchdogMotion.standard, value: isHovering)
+        .onHover { isHovering = $0 }
+        // Cards ease in when their tab is first shown. Without this the whole pane arrives
+        // as one hard cut, which makes a tab switch feel like a window reload.
+        .opacity(hasAppeared || reduceMotion ? 1 : 0)
+        .offset(y: hasAppeared || reduceMotion ? 0 : 8)
+        .onAppear {
+            guard !reduceMotion else { return }
+            withAnimation(WatchdogMotion.gentle) { hasAppeared = true }
+        }
     }
 }
 
@@ -106,6 +131,8 @@ struct TipCallout: View {
     let text: String
     var systemImage: String = "lightbulb.fill"
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
             Image(systemName: systemImage)
@@ -115,6 +142,10 @@ struct TipCallout: View {
                 .font(.system(size: 11))
                 .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
+                // The text changes as the slider moves through its ranges; crossfading it
+                // stops the callout flickering between wordings mid-drag.
+                .id(text)
+                .transition(.opacity)
             Spacer(minLength: 0)
         }
         .padding(.horizontal, 10)
@@ -123,6 +154,8 @@ struct TipCallout: View {
             RoundedRectangle(cornerRadius: 7)
                 .fill(WatchdogColor.tip.opacity(0.12))
         )
+        .wdFade(WatchdogMotion.standard, value: text)
+        .transition(WatchdogTransition.reveal(reduceMotion: reduceMotion))
     }
 }
 
@@ -133,6 +166,9 @@ struct ProLockRow: View {
     let feature: ProFeature
     var action: () -> Void
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var isHovering = false
+
     var body: some View {
         Button(action: action) {
             HStack(spacing: 10) {
@@ -140,6 +176,9 @@ struct ProLockRow: View {
                     .font(.system(size: 13))
                     .foregroundColor(WatchdogColor.pro)
                     .frame(width: 20)
+                    // The icon leans in under the pointer — a small hint that the row is a
+                    // button rather than a disabled control, which is easy to assume here.
+                    .scaleEffect(isHovering && !reduceMotion ? 1.12 : 1)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(feature.rawValue)
@@ -165,11 +204,13 @@ struct ProLockRow: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(WatchdogColor.pro.opacity(0.07))
+                    .fill(WatchdogColor.pro.opacity(isHovering ? 0.14 : 0.07))
             )
             .contentShape(RoundedRectangle(cornerRadius: 8))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle(scale: 0.985))
+        .wdFade(WatchdogMotion.standard, value: isHovering)
+        .onHover { isHovering = $0 }
     }
 }
 

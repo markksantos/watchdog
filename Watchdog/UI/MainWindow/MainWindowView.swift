@@ -14,6 +14,10 @@ struct MainWindowView: View {
     @State private var searchText = ""
     @State private var filterDetectionType: DetectionMode?
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// Slides the active filter chip's fill between chips.
+    @Namespace private var filterNamespace
+
     private var accent: Color { appearance.accentColor }
 
     /// Thumbnail width follows the Appearance tab's gallery slider.
@@ -43,6 +47,9 @@ struct MainWindowView: View {
                     statsTab
                 }
             }
+            // The three toolbar tabs are peers, so crossfading between them reads better
+            // than the hard cut a plain `switch` gives.
+            .wdFade(WatchdogMotion.standard, value: selectedTab)
             .searchable(text: $searchText, prompt: "Search by date or time...")
             .navigationTitle("Watchdog")
             .navigationDestination(for: CaptureRecord.ID.self) { captureID in
@@ -104,12 +111,13 @@ struct MainWindowView: View {
                         .background(Color.black)
 
                     HStack(spacing: 16) {
-                        Circle()
-                            .fill(WatchdogColor.live)
-                            .frame(width: 8, height: 8)
+                        PulsingDot(color: WatchdogColor.live, size: 8)
                         Text("Live — \(settingsManager.detectionMode.rawValue)")
                             .font(.caption)
                             .foregroundColor(.secondary)
+                            .id(settingsManager.detectionMode)
+                            .transition(.opacity)
+                            .wdFade(WatchdogMotion.standard, value: settingsManager.detectionMode)
                         Spacer()
                         Button(action: { detectionEngine.manualCapture() }) {
                             Label("Capture Now", systemImage: "camera.shutter.button")
@@ -186,24 +194,45 @@ struct MainWindowView: View {
 
     private var filterBar: some View {
         HStack(spacing: 8) {
-            filterChip(label: "All", type: nil)
-            ForEach(DetectionMode.allCases, id: \.self) { mode in
-                filterChip(label: mode.rawValue, icon: mode.icon, type: mode)
-            }
+            chipRow
             Spacer()
-            Text("\(filteredCaptures.count) capture\(filteredCaptures.count == 1 ? "" : "s")")
-                .font(.caption)
-                .foregroundColor(.secondary)
+            AnimatedNumber(value: filteredCaptures.count) {
+                "\($0) capture\($0 == 1 ? "" : "s")"
+            }
+            .font(.caption)
+            .foregroundColor(.secondary)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
         .background(.bar)
     }
 
+    private var chipRow: some View {
+        HStack(spacing: 8) {
+            filterChip(label: "All", type: nil)
+            ForEach(DetectionMode.allCases, id: \.self) { mode in
+                filterChip(label: mode.rawValue, icon: mode.icon, type: mode)
+            }
+        }
+        .background(alignment: .leading) {
+            Capsule()
+                .fill(accent)
+                .matchedGeometryEffect(
+                    id: chipID(filterDetectionType),
+                    in: filterNamespace,
+                    isSource: false
+                )
+        }
+    }
+
     private func filterChip(label: String, icon: String? = nil, type: DetectionMode?) -> some View {
         let isActive = filterDetectionType == type
         return Button {
-            filterDetectionType = type
+            if reduceMotion {
+                filterDetectionType = type
+            } else {
+                withAnimation(WatchdogMotion.selection) { filterDetectionType = type }
+            }
         } label: {
             HStack(spacing: 4) {
                 if let icon {
@@ -215,12 +244,23 @@ struct MainWindowView: View {
             }
             .padding(.horizontal, 9)
             .padding(.vertical, 5)
-            .background(isActive ? accent : Color.secondary.opacity(0.10))
+            .background(isActive ? Color.clear : Color.secondary.opacity(0.10))
             .foregroundColor(isActive ? .white : .secondary)
             .clipShape(Capsule())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PressableButtonStyle(scale: 0.94))
+        // Anchor for the travelling fill in `filterBar`.
+        .background(
+            Color.clear.matchedGeometryEffect(
+                id: chipID(type),
+                in: filterNamespace,
+                isSource: true
+            )
+        )
     }
+
+    /// Stable identity for a chip, including the "All" chip which has no detection type.
+    private func chipID(_ type: DetectionMode?) -> String { type?.rawValue ?? "wd.filter.all" }
 
     // MARK: - No Results State
 
@@ -237,14 +277,17 @@ struct MainWindowView: View {
                 .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .modifier(EmptyStateEntrance())
+        .transition(WatchdogTransition.pane(reduceMotion: reduceMotion))
     }
 
     // MARK: - Empty State
 
     private var emptyState: some View {
         VStack(spacing: 16) {
-            Image(systemName: "camera.viewfinder")
-                .font(.system(size: 48))
+            // A slow breath on the viewfinder, so a screen with nothing on it still looks
+            // like the app is running rather than stalled.
+            BreathingIcon(systemName: "camera.viewfinder", size: 48)
                 .foregroundColor(.secondary)
             Text("No captures yet")
                 .font(.title2)
@@ -254,6 +297,8 @@ struct MainWindowView: View {
                 .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .modifier(EmptyStateEntrance())
+        .transition(WatchdogTransition.pane(reduceMotion: reduceMotion))
     }
 
     // MARK: - Capture Grid
@@ -272,9 +317,15 @@ struct MainWindowView: View {
                                     )
                                 }
                                 .buttonStyle(.plain)
+                                .hoverLift()
+                                // Cells fade rather than pop when a capture arrives or a
+                                // filter narrows the grid.
+                                .transition(WatchdogTransition.pop(reduceMotion: reduceMotion))
                                 .contextMenu {
                                     Button(role: .destructive) {
-                                        captureStore.deleteCapture(capture)
+                                        withAnimation(WatchdogMotion.standard) {
+                                            captureStore.deleteCapture(capture)
+                                        }
                                     } label: {
                                         Label("Delete", systemImage: "trash")
                                     }
@@ -292,6 +343,7 @@ struct MainWindowView: View {
                 }
             }
             .padding(16)
+            .wdMotion(WatchdogMotion.standard, value: filteredCaptures.count)
         }
     }
 
@@ -402,6 +454,7 @@ struct CaptureCell: View {
             .foregroundColor(.white)
         }
         .clipShape(RoundedRectangle(cornerRadius: 8))
-        .shadow(color: .black.opacity(0.1), radius: 2, y: 1)
+        // The resting shadow lives in `HoverLift` at the call site, which animates it on hover.
+        // Keeping a second static one here would stack two shadows on every cell.
     }
 }
