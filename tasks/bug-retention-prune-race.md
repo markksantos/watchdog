@@ -1,5 +1,13 @@
 # BUG — Retention prune deletes captures before the subscription status is known
 
+> **FIXED 2026-07-28.** All three parts of the fix below are implemented, plus the Trash and
+> error-logging items from "Also worth fixing". Covered by `Tests/WatchdogTests/RetentionPolicyTests.swift`
+> (6 tests), which were confirmed to fail against the old behaviour before being committed —
+> reintroducing the missing `hasResolvedStatus` guard fails 2 of them by name.
+>
+> Still outstanding: the **pre-deletion warning** (audit item R7). A lapsing subscriber is still
+> pruned without notice or a chance to export first. That is a product decision, not a race.
+
 **Severity: critical.** Silent, permanent user-data loss. Affects trial and paying Pro users,
 not just the free tier. Fires on every launch.
 

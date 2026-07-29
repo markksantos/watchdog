@@ -19,6 +19,16 @@ class SubscriptionManager: ObservableObject {
     }
 
     @Published var status: SubscriptionStatus = .free
+
+    /// Whether `status` reflects a real answer from StoreKit yet.
+    ///
+    /// `status` starts at `.free` because it needs *some* value, but that default is a
+    /// placeholder, not a finding — StoreKit is queried asynchronously and cannot have
+    /// replied before the app finishes launching. Anything destructive keyed off
+    /// entitlement must wait for this, or it acts on a guess that is wrong for every
+    /// paying user.
+    @Published private(set) var hasResolvedStatus = false
+
     @Published var products: [Product] = []
     @Published var loadState: LoadState = .loading
     @Published var isLoading: Bool = false
@@ -173,6 +183,10 @@ class SubscriptionManager: ObservableObject {
                 status = .free
             }
         }
+
+        // Set last, and unconditionally: every path above has now produced a real answer,
+        // including the ones that land back on `.free`. Retention waits on this flag.
+        hasResolvedStatus = true
     }
 
     private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {

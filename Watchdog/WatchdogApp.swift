@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 @main
 struct WatchdogApp: App {
@@ -26,6 +27,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let flashAlertController = FlashAlertController.shared
     let screenDimManager = ScreenDimManager.shared
     let hotkeyManager = HotkeyManager.shared
+
+    private var cancellables = Set<AnyCancellable>()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Set app icon from bundled .icns
@@ -55,9 +58,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // cleanly — a crash or force-quit skips `applicationWillTerminate`.
         NotificationManager.shared.clearTemporaryAttachments()
 
-        // Drop any capture media that has aged out of the free tier's retention window.
+        // Drop any capture media that has aged out of the free tier's retention window —
+        // but only once StoreKit has said who this user actually is.
+        //
+        // This used to run here, synchronously. At that moment `SubscriptionManager.status`
+        // is still its `.free` default (the real value needs an async round trip that cannot
+        // have finished), so every trial and paying subscriber had their captures older than
+        // three days deleted on each launch, unlinked rather than trashed. Waiting for the
+        // answer costs a free user a few seconds of over-retention; not waiting cost
+        // subscribers their history.
+        //
         // CaptureStore also re-checks hourly, for sessions that stay open for days.
-        captureStore.pruneExpiredCaptures()
+        subscriptionManager.$hasResolvedStatus
+            .filter { $0 }
+            .first()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.captureStore.pruneExpiredCaptures() }
+            .store(in: &cancellables)
     }
 
     func applicationWillTerminate(_ notification: Notification) {
