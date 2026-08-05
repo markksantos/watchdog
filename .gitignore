@@ -19,3 +19,6 @@ Watchdog.xcodeproj/
 
 # Local signing overrides
 AppSupport/Signing.local.xcconfig
+
+# Xcode derived data (alt naming)
+DerivedDataCap/
